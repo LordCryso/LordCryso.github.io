@@ -1,347 +1,1472 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MATRIX</title>
 
-    <title>MATRIX</title>
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Google Identity Services -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #111111;
+      min-height: 100vh;
+    }
 
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: Arial, Helvetica, sans-serif;
-            background:
-                radial-gradient(circle at top, #242424 0%, #0a0a0a 45%, #000000 100%);
-            color: white;
+    button,
+    input,
+    select {
+      font: inherit;
+    }
 
-            display: flex;
-            align-items: center;
-            justify-content: center;
+    .screen {
+      min-height: 100vh;
+      display: none;
+    }
 
-            overflow: hidden;
-        }
+    .screen.active {
+      display: flex;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 460px;
-            padding: 25px;
-        }
+    /* =========================
+       AUTHENTICATION
+    ========================= */
 
-        .quadra {
-            text-align: center;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 5px;
-            color: #888;
-            margin-bottom: 12px;
-        }
+    .auth-screen {
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      background:
+        radial-gradient(circle at top, #f5f5f5 0%, #ffffff 45%);
+    }
 
-        .logo {
-            text-align: center;
-            font-size: 48px;
-            font-weight: 900;
-            letter-spacing: 10px;
-            margin-bottom: 8px;
+    .auth-card {
+      width: 100%;
+      max-width: 430px;
+      text-align: center;
+    }
 
-            animation: logoAppear 0.8s ease;
-        }
+    .brand {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: 8px;
+      margin-bottom: 8px;
+    }
 
-        .tagline {
-            text-align: center;
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 35px;
-        }
+    .presented {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: #777;
+      margin-bottom: 55px;
+      text-transform: uppercase;
+    }
 
-        .card {
-            background: rgba(18, 18, 18, 0.96);
-            border: 1px solid #292929;
-            border-radius: 20px;
-            padding: 38px;
+    .auth-card h1 {
+      font-size: 30px;
+      margin-bottom: 12px;
+    }
 
-            box-shadow:
-                0 25px 80px rgba(0, 0, 0, 0.65);
+    .auth-card .description {
+      color: #666;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
 
-            animation: cardAppear 0.7s ease;
-        }
+    .google-btn {
+      width: 100%;
+      height: 54px;
+      border: 1px solid #d8d8d8;
+      border-radius: 12px;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      font-weight: 600;
+      transition: 0.2s;
+    }
 
-        h1 {
-            margin: 0 0 10px;
-            font-size: 28px;
-        }
+    .google-btn:hover {
+      background: #f7f7f7;
+      border-color: #bbb;
+    }
 
-        .description {
-            color: #999;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
+    .google-icon {
+      font-weight: 800;
+      font-size: 20px;
+    }
 
-        .google-btn {
-            width: 100%;
-            padding: 15px;
+    .terms {
+      margin-top: 25px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #888;
+    }
 
-            border: none;
-            border-radius: 10px;
+    .terms span {
+      color: #333;
+    }
 
-            background: white;
-            color: #111;
+    .footer {
+      margin-top: 40px;
+      color: #aaa;
+      font-size: 12px;
+    }
 
-            font-size: 16px;
-            font-weight: 700;
+    /* =========================
+       FORM SCREENS
+    ========================= */
 
-            cursor: pointer;
+    .form-screen {
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      background: #fff;
+    }
 
-            transition:
-                transform 0.12s ease,
-                background 0.2s ease,
-                box-shadow 0.2s ease;
-        }
+    .form-card {
+      width: 100%;
+      max-width: 480px;
+    }
 
-        .google-btn:hover {
-            background: #eeeeee;
+    .form-card .small-brand {
+      text-align: center;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: 5px;
+      margin-bottom: 45px;
+    }
 
-            transform: translateY(-2px);
+    .form-card h2 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
 
-            box-shadow:
-                0 8px 25px rgba(255, 255, 255, 0.08);
-        }
+    .form-card .subtitle {
+      color: #777;
+      line-height: 1.5;
+      margin-bottom: 28px;
+    }
 
-        .google-btn:active {
-            transform: scale(0.95);
-        }
+    .field {
+      margin-bottom: 18px;
+    }
 
-        .terms {
-            text-align: center;
-            color: #666;
-            font-size: 12px;
-            line-height: 1.5;
-            margin-top: 25px;
-        }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
 
-        .footer {
-            text-align: center;
-            color: #555;
-            font-size: 12px;
-            margin-top: 22px;
-        }
+    .field input,
+    .field select {
+      width: 100%;
+      height: 50px;
+      padding: 0 15px;
+      border: 1px solid #d8d8d8;
+      border-radius: 10px;
+      background: #fff;
+      outline: none;
+    }
 
-        @keyframes logoAppear {
-            from {
-                opacity: 0;
-                transform: translateY(-15px);
-            }
+    .field input:focus,
+    .field select:focus {
+      border-color: #111;
+    }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .primary-btn {
+      width: 100%;
+      height: 52px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 11px;
+      background: #111;
+      color: white;
+      cursor: pointer;
+      font-weight: 700;
+      transition: 0.2s;
+    }
 
-        @keyframes cardAppear {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+    .primary-btn:hover {
+      background: #292929;
+    }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    .primary-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
 
-        @media (max-width: 500px) {
-            .logo {
-                font-size: 38px;
-                letter-spacing: 7px;
-            }
+    .back-btn {
+      width: 100%;
+      height: 48px;
+      margin-top: 10px;
+      border: none;
+      background: transparent;
+      color: #666;
+      cursor: pointer;
+    }
 
-            .card {
-                padding: 28px;
-            }
-        }
-    </style>
+    .error {
+      display: none;
+      background: #fff1f1;
+      color: #b00020;
+      border: 1px solid #ffd1d1;
+      border-radius: 9px;
+      padding: 11px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .error.show {
+      display: block;
+    }
+
+    .success {
+      display: none;
+      background: #f0fff4;
+      color: #16733a;
+      border: 1px solid #c9f0d5;
+      border-radius: 9px;
+      padding: 11px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+
+    .success.show {
+      display: block;
+    }
+
+    .matrix-id-preview {
+      background: #f6f6f6;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .matrix-id-preview strong {
+      display: block;
+      font-size: 18px;
+      margin-top: 5px;
+    }
+
+    /* =========================
+       HOME
+    ========================= */
+
+    .home-screen {
+      flex-direction: column;
+      background: #f7f7f7;
+    }
+
+    .navbar {
+      width: 100%;
+      height: 68px;
+      background: #fff;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+    }
+
+    .nav-logo {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 5px;
+    }
+
+    .nav-user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .signout-btn {
+      border: 1px solid #ddd;
+      background: #fff;
+      border-radius: 8px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .home-content {
+      width: 100%;
+      max-width: 1200px;
+      padding: 50px 25px;
+    }
+
+    .hero {
+      background: #111;
+      color: white;
+      border-radius: 18px;
+      padding: 50px;
+      margin-bottom: 30px;
+    }
+
+    .hero h1 {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    .hero p {
+      color: #bbb;
+      line-height: 1.6;
+      max-width: 650px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      margin-bottom: 18px;
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .content-card {
+      background: white;
+      border-radius: 14px;
+      min-height: 180px;
+      border: 1px solid #e5e5e5;
+      padding: 22px;
+      display: flex;
+      align-items: flex-end;
+      font-weight: 700;
+    }
+
+    /* =========================
+       LOADING
+    ========================= */
+
+    .loading-screen {
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+    }
+
+    .loader-container {
+      text-align: center;
+    }
+
+    .loader-logo {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: 7px;
+      margin-bottom: 20px;
+    }
+
+    .loader-text {
+      color: #888;
+      font-size: 13px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 700px) {
+      .brand {
+        font-size: 34px;
+      }
+
+      .presented {
+        margin-bottom: 40px;
+      }
+
+      .hero {
+        padding: 30px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .navbar {
+        padding: 0 16px;
+      }
+
+      .user-name {
+        display: none;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="container">
+  <!-- =========================
+       LOADING
+  ========================= -->
 
-        <div class="quadra">
-            QUADRA PRESENTS
-        </div>
+  <section id="loadingScreen" class="screen loading-screen active">
+    <div class="loader-container">
+      <div class="loader-logo">MATRIX</div>
+      <div class="loader-text">Loading...</div>
+    </div>
+  </section>
 
-        <div class="logo">
-            MATRIX
-        </div>
 
-        <div class="tagline">
-            Movies. Creators. Stories.
-        </div>
+  <!-- =========================
+       SIGN IN
+  ========================= -->
 
-        <div class="card">
+  <section id="signInScreen" class="screen auth-screen">
 
-            <h1>Welcome to MATRIX</h1>
+    <div class="auth-card">
 
-            <div class="description">
-                Sign in to continue and explore movies,
-                creators, and original content.
-            </div>
+      <div class="brand">MATRIX</div>
 
-            <!-- Google Sign-In Button -->
-            <button class="google-btn" onclick="googleSignIn()">
-                Continue with Google
-            </button>
+      <div class="presented">
+        QUADRA PRESENTS
+      </div>
 
-            <div class="terms">
-                By continuing, you agree to the MATRIX
-                terms and policies.
-            </div>
+      <h1>Welcome to MATRIX</h1>
 
-        </div>
+      <p class="description">
+        Watch movies, discover original content,
+        and connect with creators.
+      </p>
 
-        <div class="footer">
-            © 2026 QUADRA
-        </div>
+      <div id="signInError" class="error"></div>
+
+      <button id="googleSignInBtn" class="google-btn">
+        <span class="google-icon">G</span>
+        Continue with Google
+      </button>
+
+      <div class="terms">
+        By continuing, you agree to the
+        <span>Terms of Service</span> and
+        <span>Privacy Policy</span>.
+      </div>
+
+      <div class="footer">
+        © 2026 QUADRA
+      </div>
 
     </div>
 
-    <script>
-        /*
-         * PASTE YOUR GOOGLE CLIENT ID BELOW
-         *
-         * Example:
-         * const GOOGLE_CLIENT_ID = "123456789-example.apps.googleusercontent.com";
-         *
-         * Do NOT put your Client Secret here.
-         */
+  </section>
 
-        const GOOGLE_CLIENT_ID = "707793621917-b5n9c4q7o6k8goja82ihmevc7pj3edci.apps.googleusercontent.com";
 
-        let googleReady = false;
+  <!-- =========================
+       MATRIX ID
+  ========================= -->
 
-        function initializeGoogle() {
-            if (
-                typeof google === "undefined" ||
-                !google.accounts ||
-                !google.accounts.id
-            ) {
-                return;
-            }
+  <section id="matrixIdScreen" class="screen form-screen">
 
-            google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: handleGoogleResponse
+    <div class="form-card">
+
+      <div class="small-brand">MATRIX</div>
+
+      <h2>Create your MATRIX ID</h2>
+
+      <p class="subtitle">
+        Your MATRIX ID is your unique account identifier.
+      </p>
+
+      <div id="matrixIdError" class="error"></div>
+
+      <div class="field">
+        <label for="matrixIdInput">MATRIX ID</label>
+
+        <input
+          id="matrixIdInput"
+          type="text"
+          placeholder="@YourName"
+          maxlength="30"
+          autocomplete="off"
+        >
+      </div>
+
+      <button id="matrixIdNextBtn" class="primary-btn">
+        Continue
+      </button>
+
+      <button id="matrixIdBackBtn" class="back-btn">
+        Back
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       USERNAME
+  ========================= -->
+
+  <section id="usernameScreen" class="screen form-screen">
+
+    <div class="form-card">
+
+      <div class="small-brand">MATRIX</div>
+
+      <h2>Choose your username</h2>
+
+      <p class="subtitle">
+        This is the name other people will see on your MATRIX profile.
+      </p>
+
+      <div id="usernameError" class="error"></div>
+
+      <div class="matrix-id-preview">
+        Your MATRIX ID
+        <strong id="matrixIdDisplay">@</strong>
+      </div>
+
+      <div class="field">
+        <label for="usernameInput">Username</label>
+
+        <input
+          id="usernameInput"
+          type="text"
+          placeholder="Lord Cryso"
+          maxlength="30"
+          autocomplete="off"
+        >
+      </div>
+
+      <button id="usernameNextBtn" class="primary-btn">
+        Continue
+      </button>
+
+      <button id="usernameBackBtn" class="back-btn">
+        Back
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       PERSONAL DETAILS
+  ========================= -->
+
+  <section id="detailsScreen" class="screen form-screen">
+
+    <div class="form-card">
+
+      <div class="small-brand">MATRIX</div>
+
+      <h2>Complete your profile</h2>
+
+      <p class="subtitle">
+        A few details are needed to create your MATRIX account.
+      </p>
+
+      <div id="detailsError" class="error"></div>
+
+      <div class="field">
+        <label for="fullNameInput">Full Name</label>
+
+        <input
+          id="fullNameInput"
+          type="text"
+          placeholder="Your full name"
+          maxlength="80"
+          autocomplete="name"
+        >
+      </div>
+
+      <div class="field">
+        <label for="countryInput">Country</label>
+
+        <input
+          id="countryInput"
+          type="text"
+          placeholder="Country"
+          maxlength="60"
+          autocomplete="country-name"
+        >
+      </div>
+
+      <div class="field">
+        <label for="stateInput">State / Province</label>
+
+        <input
+          id="stateInput"
+          type="text"
+          placeholder="State or Province"
+          maxlength="80"
+        >
+      </div>
+
+      <div class="field">
+        <label for="ageInput">Age</label>
+
+        <input
+          id="ageInput"
+          type="number"
+          min="13"
+          max="120"
+          placeholder="Age"
+        >
+      </div>
+
+      <div class="field">
+        <label for="genderInput">Gender</label>
+
+        <select id="genderInput">
+          <option value="">Select</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+          <option value="Prefer not to say">Prefer not to say</option>
+        </select>
+      </div>
+
+      <p style="font-size:12px;color:#888;line-height:1.5;margin-bottom:18px;">
+        Age and gender are used only for content restrictions
+        and age-appropriate experiences.
+      </p>
+
+      <button id="createAccountBtn" class="primary-btn">
+        Create MATRIX Account
+      </button>
+
+      <button id="detailsBackBtn" class="back-btn">
+        Back
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       HOME
+  ========================= -->
+
+  <section id="homeScreen" class="screen home-screen">
+
+    <nav class="navbar">
+
+      <div class="nav-logo">
+        MATRIX
+      </div>
+
+      <div class="nav-user">
+
+        <span id="homeUsername" class="user-name">
+          User
+        </span>
+
+        <button id="signOutBtn" class="signout-btn">
+          Sign Out
+        </button>
+
+      </div>
+
+    </nav>
+
+    <main class="home-content">
+
+      <div class="hero">
+
+        <h1>Welcome to MATRIX.</h1>
+
+        <p>
+          Movies, videos, original content and creators —
+          all in one place.
+        </p>
+
+      </div>
+
+      <h2 class="section-title">
+        Explore MATRIX
+      </h2>
+
+      <div class="content-grid">
+
+        <div class="content-card">
+          Movies
+        </div>
+
+        <div class="content-card">
+          Videos
+        </div>
+
+        <div class="content-card">
+          Creators
+        </div>
+
+      </div>
+
+    </main>
+
+  </section>
+
+
+  <script>
+    /* =====================================================
+       MATRIX + SUPABASE CONFIGURATION
+    ===================================================== */
+
+    const SUPABASE_URL =
+      "https://fdoxfsvemgjdafyawkkz.supabase.co";
+
+    /*
+      Paste your Supabase PUBLISHABLE KEY here.
+
+      IMPORTANT:
+      Never put your Google Client Secret here.
+    */
+
+    const SUPABASE_PUBLISHABLE_KEY =
+      "sb_publishable_sTi8TJQf_M9idpGh05Rrsw_cvnKs8-7
+        ";
+
+
+    const { createClient } = window.supabase;
+
+    const supabaseClient = createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+    /* =====================================================
+       STATE
+    ===================================================== */
+
+    let currentUser = null;
+
+    let onboardingData = {
+      matrixId: "",
+      username: "",
+      fullName: "",
+      country: "",
+      state: "",
+      age: null,
+      gender: ""
+    };
+
+
+    /* =====================================================
+       SCREEN CONTROL
+    ===================================================== */
+
+    function showScreen(screenId) {
+
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+      });
+
+      document.getElementById(screenId).classList.add("active");
+    }
+
+
+    /* =====================================================
+       ERROR HELPERS
+    ===================================================== */
+
+    function showError(elementId, message) {
+
+      const element = document.getElementById(elementId);
+
+      element.textContent = message;
+      element.classList.add("show");
+    }
+
+
+    function clearError(elementId) {
+
+      const element = document.getElementById(elementId);
+
+      element.textContent = "";
+      element.classList.remove("show");
+    }
+
+
+    /* =====================================================
+       GOOGLE SIGN IN
+    ===================================================== */
+
+    document
+      .getElementById("googleSignInBtn")
+      .addEventListener("click", async () => {
+
+        clearError("signInError");
+
+        const button =
+          document.getElementById("googleSignInBtn");
+
+        button.disabled = true;
+        button.textContent = "Connecting...";
+
+        try {
+
+          const { error } =
+            await supabaseClient.auth.signInWithOAuth({
+
+              provider: "google",
+
+              options: {
+                redirectTo:
+                  "https://lordcryso.github.io/MATRIX/"
+              }
+
             });
 
-            googleReady = true;
+
+          if (error) {
+            throw error;
+          }
+
+        } catch (error) {
+
+          console.error(error);
+
+          showError(
+            "signInError",
+            "Google sign-in could not be started. Please try again."
+          );
+
+          button.disabled = false;
+          button.innerHTML =
+            '<span class="google-icon">G</span> Continue with Google';
         }
 
-        function googleSignIn() {
+      });
 
-            if (!GOOGLE_CLIENT_ID ||
-                GOOGLE_CLIENT_ID === "PASTE_YOUR_CLIENT_ID_HERE") {
 
-                alert("Add your Google Client ID to the code first.");
-                return;
-            }
+    /* =====================================================
+       CHECK EXISTING PROFILE
+    ===================================================== */
 
-            if (!googleReady) {
-                initializeGoogle();
-            }
+    async function checkUserProfile(user) {
 
-            if (!googleReady) {
-                alert("Google Sign-In is still loading. Please try again.");
-                return;
-            }
+      const {
+        data,
+        error
+      } = await supabaseClient
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
 
-            /*
-             * Google's official popup button is rendered temporarily
-             * and clicked programmatically.
-             */
 
-            const hiddenGoogleButton = document.createElement("div");
+      if (error) {
 
-            hiddenGoogleButton.style.position = "fixed";
-            hiddenGoogleButton.style.left = "-9999px";
-            hiddenGoogleButton.style.top = "0";
+        console.error(error);
 
-            document.body.appendChild(hiddenGoogleButton);
+        showError(
+          "signInError",
+          "We could not load your MATRIX profile."
+        );
 
-            google.accounts.id.renderButton(
-                hiddenGoogleButton,
-                {
-                    type: "standard",
-                    theme: "outline",
-                    size: "large",
-                    text: "signin_with",
-                    shape: "rectangular",
-                    width: 300
-                }
+        showScreen("signInScreen");
+
+        return;
+      }
+
+
+      if (data) {
+
+        onboardingData = {
+          matrixId: data.matrix_id,
+          username: data.username,
+          fullName: data.full_name,
+          country: data.country,
+          state: data.state,
+          age: data.age,
+          gender: data.gender
+        };
+
+        document.getElementById("homeUsername").textContent =
+          data.username;
+
+        showScreen("homeScreen");
+
+      } else {
+
+        showScreen("matrixIdScreen");
+
+      }
+
+    }
+
+
+    /* =====================================================
+       MATRIX ID
+    ===================================================== */
+
+    document
+      .getElementById("matrixIdNextBtn")
+      .addEventListener("click", () => {
+
+        clearError("matrixIdError");
+
+        let value =
+          document
+            .getElementById("matrixIdInput")
+            .value
+            .trim();
+
+
+        if (!value) {
+
+          showError(
+            "matrixIdError",
+            "Please enter a MATRIX ID."
+          );
+
+          return;
+        }
+
+
+        if (!value.startsWith("@")) {
+          value = "@" + value;
+        }
+
+
+        const idWithoutAt =
+          value.substring(1);
+
+
+        if (!/^[A-Za-z0-9_]+$/.test(idWithoutAt)) {
+
+          showError(
+            "matrixIdError",
+            "Use only letters, numbers, and underscores."
+          );
+
+          return;
+        }
+
+
+        if (
+          idWithoutAt.length < 3 ||
+          idWithoutAt.length > 29
+        ) {
+
+          showError(
+            "matrixIdError",
+            "Your MATRIX ID must contain 3–29 characters after @."
+          );
+
+          return;
+        }
+
+
+        onboardingData.matrixId = value;
+
+        document.getElementById("matrixIdDisplay").textContent =
+          value;
+
+        showScreen("usernameScreen");
+
+      });
+
+
+    document
+      .getElementById("matrixIdBackBtn")
+      .addEventListener("click", async () => {
+
+        await supabaseClient.auth.signOut();
+
+        currentUser = null;
+
+        showScreen("signInScreen");
+
+      });
+
+
+    /* =====================================================
+       USERNAME
+    ===================================================== */
+
+    document
+      .getElementById("usernameNextBtn")
+      .addEventListener("click", async () => {
+
+        clearError("usernameError");
+
+        const button =
+          document.getElementById("usernameNextBtn");
+
+        const username =
+          document
+            .getElementById("usernameInput")
+            .value
+            .trim();
+
+
+        if (!username) {
+
+          showError(
+            "usernameError",
+            "Please enter a username."
+          );
+
+          return;
+        }
+
+
+        if (username.length < 2) {
+
+          showError(
+            "usernameError",
+            "Username must contain at least 2 characters."
+          );
+
+          return;
+        }
+
+
+        if (username.length > 30) {
+
+          showError(
+            "usernameError",
+            "Username cannot be longer than 30 characters."
+          );
+
+          return;
+        }
+
+
+        button.disabled = true;
+        button.textContent = "Checking...";
+
+
+        try {
+
+          /*
+            Check whether another account already uses
+            this username.
+          */
+
+          const {
+            data,
+            error
+          } = await supabaseClient
+            .from("profiles")
+            .select("id")
+            .eq("username", username)
+            .maybeSingle();
+
+
+          if (error) {
+            throw error;
+          }
+
+
+          if (data) {
+
+            showError(
+              "usernameError",
+              "That username is already taken. Choose another one."
             );
 
-            const googleButton =
-                hiddenGoogleButton.querySelector("div[role='button']");
+            button.disabled = false;
+            button.textContent = "Continue";
 
-            if (googleButton) {
-                googleButton.click();
-            } else {
-                alert("Google Sign-In could not be opened.");
-            }
+            return;
+          }
 
-            setTimeout(() => {
-                hiddenGoogleButton.remove();
-            }, 5000);
+
+          onboardingData.username = username;
+
+          showScreen("detailsScreen");
+
+
+        } catch (error) {
+
+          console.error(error);
+
+          showError(
+            "usernameError",
+            "We could not check that username. Please try again."
+          );
+
         }
 
-        function handleGoogleResponse(response) {
 
-            /*
-             * Google has successfully returned an ID token.
-             *
-             * For now we display a confirmation.
-             *
-             * IMPORTANT:
-             * A real production login should send this credential
-             * to a backend/server and verify the token there.
-             */
+        button.disabled = false;
+        button.textContent = "Continue";
 
-            if (response && response.credential) {
-                alert("Google Sign-In successful!");
-                console.log("Google credential received.");
-            } else {
-                alert("Google Sign-In did not return a credential.");
-            }
+      });
+
+
+    document
+      .getElementById("usernameBackBtn")
+      .addEventListener("click", () => {
+
+        showScreen("matrixIdScreen");
+
+      });
+
+
+    /* =====================================================
+       CREATE ACCOUNT
+    ===================================================== */
+
+    document
+      .getElementById("createAccountBtn")
+      .addEventListener("click", async () => {
+
+        clearError("detailsError");
+
+        const button =
+          document.getElementById("createAccountBtn");
+
+
+        const fullName =
+          document
+            .getElementById("fullNameInput")
+            .value
+            .trim();
+
+
+        const country =
+          document
+            .getElementById("countryInput")
+            .value
+            .trim();
+
+
+        const state =
+          document
+            .getElementById("stateInput")
+            .value
+            .trim();
+
+
+        const age =
+          Number(
+            document
+              .getElementById("ageInput")
+              .value
+          );
+
+
+        const gender =
+          document
+            .getElementById("genderInput")
+            .value;
+
+
+        if (!fullName) {
+
+          showError(
+            "detailsError",
+            "Please enter your full name."
+          );
+
+          return;
         }
 
-        /*
-         * Wait for Google's library to become available.
-         */
 
-        window.addEventListener("load", () => {
+        if (!country) {
 
-            let attempts = 0;
+          showError(
+            "detailsError",
+            "Please enter your country."
+          );
 
-            const waitForGoogle = setInterval(() => {
+          return;
+        }
 
-                initializeGoogle();
 
-                attempts++;
+        if (!state) {
 
-                if (googleReady || attempts >= 50) {
-                    clearInterval(waitForGoogle);
-                }
+          showError(
+            "detailsError",
+            "Please enter your state or province."
+          );
 
-            }, 100);
-        });
-    </script>
+          return;
+        }
+
+
+        if (!Number.isInteger(age) || age < 13 || age > 120) {
+
+          showError(
+            "detailsError",
+            "Please enter a valid age."
+          );
+
+          return;
+        }
+
+
+        if (!gender) {
+
+          showError(
+            "detailsError",
+            "Please select your gender."
+          );
+
+          return;
+        }
+
+
+        if (!currentUser) {
+
+          showError(
+            "detailsError",
+            "Your Google session has expired. Please sign in again."
+          );
+
+          return;
+        }
+
+
+        button.disabled = true;
+        button.textContent = "Creating account...";
+
+
+        try {
+
+          /*
+            Insert the MATRIX profile.
+
+            The database has UNIQUE constraints on:
+              matrix_id
+              username
+
+            So duplicate values cannot be stored.
+          */
+
+          const {
+            data,
+            error
+          } = await supabaseClient
+            .from("profiles")
+            .insert({
+
+              id: currentUser.id,
+
+              matrix_id:
+                onboardingData.matrixId,
+
+              username:
+                onboardingData.username,
+
+              full_name:
+                fullName,
+
+              country:
+                country,
+
+              state:
+                state,
+
+              age:
+                age,
+
+              gender:
+                gender
+
+            })
+            .select()
+            .single();
+
+
+          if (error) {
+
+            console.error(error);
+
+            if (
+              error.code === "23505"
+            ) {
+
+              showError(
+                "detailsError",
+                "That MATRIX ID or username is already in use."
+              );
+
+            } else {
+
+              showError(
+                "detailsError",
+                "Your MATRIX account could not be created. Please try again."
+              );
+
+            }
+
+            return;
+          }
+
+
+          /*
+            Account successfully created.
+          */
+
+          onboardingData.fullName = fullName;
+          onboardingData.country = country;
+          onboardingData.state = state;
+          onboardingData.age = age;
+          onboardingData.gender = gender;
+
+
+          document.getElementById("homeUsername").textContent =
+            data.username;
+
+
+          showScreen("homeScreen");
+
+
+        } catch (error) {
+
+          console.error(error);
+
+          showError(
+            "detailsError",
+            "Something went wrong while creating your account."
+          );
+
+        } finally {
+
+          button.disabled = false;
+          button.textContent = "Create MATRIX Account";
+
+        }
+
+      });
+
+
+    document
+      .getElementById("detailsBackBtn")
+      .addEventListener("click", () => {
+
+        showScreen("usernameScreen");
+
+      });
+
+
+    /* =====================================================
+       SIGN OUT
+    ===================================================== */
+
+    document
+      .getElementById("signOutBtn")
+      .addEventListener("click", async () => {
+
+        await supabaseClient.auth.signOut();
+
+        currentUser = null;
+
+        onboardingData = {
+          matrixId: "",
+          username: "",
+          fullName: "",
+          country: "",
+          state: "",
+          age: null,
+          gender: ""
+        };
+
+        showScreen("signInScreen");
+
+      });
+
+
+    /* =====================================================
+       INITIALIZE MATRIX
+    ===================================================== */
+
+    async function initializeMatrix() {
+
+      try {
+
+        const {
+          data: {
+            session
+          }
+        } = await supabaseClient.auth.getSession();
+
+
+        if (session && session.user) {
+
+          currentUser = session.user;
+
+          await checkUserProfile(currentUser);
+
+        } else {
+
+          showScreen("signInScreen");
+
+        }
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        showScreen("signInScreen");
+
+      }
+
+    }
+
+
+    /* =====================================================
+       AUTH STATE LISTENER
+    ===================================================== */
+
+    supabaseClient.auth.onAuthStateChange(
+      async (event, session) => {
+
+        if (session && session.user) {
+
+          currentUser = session.user;
+
+          /*
+            Don't immediately reload the page.
+            The normal initialization handles the first load.
+          */
+
+        } else if (event === "SIGNED_OUT") {
+
+          currentUser = null;
+
+          showScreen("signInScreen");
+
+        }
+
+      }
+    );
+
+
+    /* =====================================================
+       START
+    ===================================================== */
+
+    initializeMatrix();
+
+  </script>
 
 </body>
 </html>
+```

@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Browser tab title -->
     <title>MATRIX</title>
+
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
         * {
@@ -193,6 +195,7 @@
                 creators, and original content.
             </div>
 
+            <!-- Google Sign-In Button -->
             <button class="google-btn" onclick="googleSignIn()">
                 Continue with Google
             </button>
@@ -211,7 +214,133 @@
     </div>
 
     <script>
-        <script src="https://accounts.google.com/gsi/client" async defer></script>
+        /*
+         * PASTE YOUR GOOGLE CLIENT ID BELOW
+         *
+         * Example:
+         * const GOOGLE_CLIENT_ID = "123456789-example.apps.googleusercontent.com";
+         *
+         * Do NOT put your Client Secret here.
+         */
+
+        const GOOGLE_CLIENT_ID = "707793621917-b5n9c4q7o6k8goja82ihmevc7pj3edci.apps.googleusercontent.com";
+
+        let googleReady = false;
+
+        function initializeGoogle() {
+            if (
+                typeof google === "undefined" ||
+                !google.accounts ||
+                !google.accounts.id
+            ) {
+                return;
+            }
+
+            google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: handleGoogleResponse
+            });
+
+            googleReady = true;
+        }
+
+        function googleSignIn() {
+
+            if (!GOOGLE_CLIENT_ID ||
+                GOOGLE_CLIENT_ID === "PASTE_YOUR_CLIENT_ID_HERE") {
+
+                alert("Add your Google Client ID to the code first.");
+                return;
+            }
+
+            if (!googleReady) {
+                initializeGoogle();
+            }
+
+            if (!googleReady) {
+                alert("Google Sign-In is still loading. Please try again.");
+                return;
+            }
+
+            /*
+             * Google's official popup button is rendered temporarily
+             * and clicked programmatically.
+             */
+
+            const hiddenGoogleButton = document.createElement("div");
+
+            hiddenGoogleButton.style.position = "fixed";
+            hiddenGoogleButton.style.left = "-9999px";
+            hiddenGoogleButton.style.top = "0";
+
+            document.body.appendChild(hiddenGoogleButton);
+
+            google.accounts.id.renderButton(
+                hiddenGoogleButton,
+                {
+                    type: "standard",
+                    theme: "outline",
+                    size: "large",
+                    text: "signin_with",
+                    shape: "rectangular",
+                    width: 300
+                }
+            );
+
+            const googleButton =
+                hiddenGoogleButton.querySelector("div[role='button']");
+
+            if (googleButton) {
+                googleButton.click();
+            } else {
+                alert("Google Sign-In could not be opened.");
+            }
+
+            setTimeout(() => {
+                hiddenGoogleButton.remove();
+            }, 5000);
+        }
+
+        function handleGoogleResponse(response) {
+
+            /*
+             * Google has successfully returned an ID token.
+             *
+             * For now we display a confirmation.
+             *
+             * IMPORTANT:
+             * A real production login should send this credential
+             * to a backend/server and verify the token there.
+             */
+
+            if (response && response.credential) {
+                alert("Google Sign-In successful!");
+                console.log("Google credential received.");
+            } else {
+                alert("Google Sign-In did not return a credential.");
+            }
+        }
+
+        /*
+         * Wait for Google's library to become available.
+         */
+
+        window.addEventListener("load", () => {
+
+            let attempts = 0;
+
+            const waitForGoogle = setInterval(() => {
+
+                initializeGoogle();
+
+                attempts++;
+
+                if (googleReady || attempts >= 50) {
+                    clearInterval(waitForGoogle);
+                }
+
+            }, 100);
+        });
     </script>
 
 </body>

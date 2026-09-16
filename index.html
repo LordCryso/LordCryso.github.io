@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUADRA PRESENTS — MATRIX</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at top, #242424 0%, #0a0a0a 45%, #000000 100%);
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            overflow: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 460px;
+            padding: 25px;
+        }
+
+        /* QUADRA */
+        .quadra {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 5px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
+        /* MATRIX LOGO */
+        .logo {
+            text-align: center;
+            font-size: 48px;
+            font-weight: 900;
+            letter-spacing: 10px;
+            margin-bottom: 8px;
+
+            animation: logoAppear 0.8s ease;
+        }
+
+        .tagline {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 35px;
+        }
+
+        /* CARD */
+        .card {
+            background: rgba(18, 18, 18, 0.96);
+            border: 1px solid #292929;
+            border-radius: 20px;
+            padding: 38px;
+
+            box-shadow:
+                0 25px 80px rgba(0, 0, 0, 0.65);
+
+            animation: cardAppear 0.7s ease;
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 28px;
+        }
+
+        .description {
+            color: #999;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* GOOGLE BUTTON */
+        .google-btn {
+            width: 100%;
+            padding: 15px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: white;
+            color: #111;
+
+            font-size: 16px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.12s ease,
+                background 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .google-btn:hover {
+            background: #eeeeee;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 8px 25px rgba(255, 255, 255, 0.08);
+        }
+
+        /* CLICK ANIMATION */
+        .google-btn:active {
+            transform: scale(0.95);
+        }
+
+        .terms {
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-top: 25px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #555;
+            font-size: 12px;
+            margin-top: 22px;
+        }
+
+        /* PAGE ANIMATIONS */
+
+        @keyframes logoAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 500px) {
+
+            .logo {
+                font-size: 38px;
+                letter-spacing: 7px;
+            }
+
+            .card {
+                padding: 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="quadra">
+            QUADRA PRESENTS
+        </div>
+
+        <div class="logo">
+            MATRIX
+        </div>
+
+        <div class="tagline">
+            Movies. Creators. Stories.
+        </div>
+
+        <div class="card">
+
+            <h1>Welcome to MATRIX</h1>
+
+            <div class="description">
+                Sign in to continue and explore movies,
+                creators, and original content.
+            </div>
+
+            <button class="google-btn" onclick="googleSignIn()">
+                Continue with Google
+            </button>
+
+            <div class="terms">
+                By continuing, you agree to the MATRIX
+                terms and policies.
+            </div>
+
+        </div>
+
+        <div class="footer">
+            © 2026 QUADRA
+        </div>
+
+    </div>
+
+    <script>
+        function googleSignIn() {
+            alert("Google Sign-In will be connected here.");
+        }
+    </script>
+
+</body>
+</html>

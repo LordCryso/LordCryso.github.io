@@ -831,16 +831,31 @@ document
 
       hideError("idError");
 
-      accountData.matrixId =
-        "@" + value;
+const finalMatrixId = "@" + value;
 
-      document
-        .getElementById("matrixId")
-        .value =
-        "@" + value;
+const { data, error } = await supabaseClient
+  .from("profiles")
+  .select("id")
+  .eq("matrix_id", finalMatrixId)
+  .maybeSingle();
 
-      showScreen(usernameScreen);
+if (error) {
+  alert("Could not check MATRIX ID. Please try again.");
+  return;
+}
 
+if (data) {
+  alert("MATRIX ID already taken.");
+  return;
+}
+
+accountData.matrixId = finalMatrixId;
+
+document
+  .getElementById("matrixId")
+  .value = finalMatrixId;
+
+showScreen(usernameScreen);
     }
   );
 

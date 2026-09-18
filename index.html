@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MATRIX</title>
-<link rel="icon" type="image/png" href="MATRIX-logo.png">
+<link rel="icon" type="image/png" href="./MATRIX-logo.png">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -39,8 +39,8 @@ select option{background:#181818}.row{display:grid;grid-template-columns:1fr 1fr
 /* APP */
 .app{display:none;min-height:100vh;background:#080808}.app.active{display:block}
 .topbar{height:70px;border-bottom:1px solid #202020;background:#090909;display:flex;align-items:center;padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:100}
-.matrix-brand{width:150px;height:48px;display:flex;align-items:center;cursor:pointer}
-.matrix-brand img{width:42px;height:42px;object-fit:contain;display:block}
+.matrix-brand{width:150px;height:48px;display:flex;align-items:center;cursor:pointer;overflow:hidden}
+.matrix-brand img{width:44px;height:44px;object-fit:contain;display:block;border-radius:8px}
 .top-nav{display:flex;align-items:center;gap:25px}.top-nav button{background:none;border:none;color:#999;font-size:14px}
 .top-nav button:hover,.top-nav button.active{color:#fff}
 .top-right{margin-left:auto;display:flex;align-items:center;gap:15px}
@@ -192,7 +192,7 @@ select option{background:#181818}.row{display:grid;grid-template-columns:1fr 1fr
 <div class="app" id="app">
 
 <header class="topbar">
-<div class="matrix-brand" id="matrixBrand" aria-label="MATRIX home"><img src="MATRIX-logo.png" alt="MATRIX"></div>
+<div class="matrix-brand" id="matrixBrand" aria-label="MATRIX home"><img src="./MATRIX-logo.png" alt="MATRIX"></div>
 <nav class="top-nav">
 <button data-page="home" class="active">Home</button>
 <button data-page="movies">Movies</button>

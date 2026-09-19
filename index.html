@@ -4,684 +4,126 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MATRIX</title>
-  <link rel="icon" type="image/png" href="./MATRIX-logo.png?v=3">
-<link rel="shortcut icon" type="image/png" href="./MATRIX-logo.png?v=3">
-<link rel="icon" type="image/png" href="./MATRIX-logo.png?v=2">
-<link rel="shortcut icon" type="image/png" href="./MATRIX-logo.png?v=2">
-<link rel="apple-touch-icon" href="./MATRIX-logo.png?v=2">
+<link rel="icon" type="image/png" href="./MATRIX-logo.png?v=4">
+<link rel="shortcut icon" type="image/png" href="./MATRIX-logo.png?v=4">
+<link rel="apple-touch-icon" href="./MATRIX-logo.png?v=4">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#080808;color:#fff;font-family:Arial,Helvetica,sans-serif}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.auth-page{min-height:100vh;display:none;justify-content:center;align-items:center}
-.auth-container{width:100%;max-width:470px;padding:30px 20px}
-.screen{display:none}.screen.active{display:block}
-.quadra{text-align:center;color:#777;font-size:11px;letter-spacing:4px;margin-bottom:12px}
-.logo{text-align:center;font-size:46px;font-weight:900;letter-spacing:8px;margin-bottom:10px}
-.tagline{text-align:center;color:#999;font-size:14px;margin-bottom:35px}
-.card{background:#111;border:1px solid #292929;border-radius:18px;padding:34px 30px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-h1{text-align:center;font-size:25px;margin-bottom:10px}
-.description{text-align:center;color:#999;font-size:14px;line-height:1.6;margin-bottom:27px}
-.google-button,.continue-button{width:100%;height:52px;border:none;border-radius:10px;font-size:15px;font-weight:bold;transition:.2s}
-.google-button{background:#fff;color:#111}.continue-button{background:#fff;color:#111;margin-top:8px}
-.google-button:hover,.continue-button:hover{transform:translateY(-2px)}
-.google-button:active,.continue-button:active{transform:scale(.98)}
-.input-group{margin-bottom:17px}label{display:block;font-size:13px;color:#ddd;margin-bottom:7px}
-input,select,textarea{width:100%;background:#181818;border:1px solid #303030;border-radius:9px;color:#fff;padding:12px 14px;outline:none;font-size:14px}
-input,select{height:48px}textarea{min-height:120px;resize:vertical}
-input:focus,select:focus,textarea:focus{border-color:#777}
-select option{background:#181818}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.note{color:#777;font-size:11px;line-height:1.5;margin-top:4px;margin-bottom:15px}
-.error{display:none;color:#ff6868;font-size:12px;margin-top:8px}
-.status{color:#999;font-size:12px;text-align:center;margin-top:10px}
-.terms{color:#666;text-align:center;font-size:11px;line-height:1.5;margin-top:20px}
-.footer{color:#555;text-align:center;font-size:11px;margin-top:23px}
-
-/* APP */
-.app{display:none;min-height:100vh;background:#080808}.app.active{display:block}
-.topbar{height:70px;border-bottom:1px solid #202020;background:#090909;display:flex;align-items:center;padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:100}
-.matrix-brand{width:150px;height:48px;display:flex;align-items:center;cursor:pointer;overflow:hidden}
-.matrix-brand img{width:44px;height:44px;object-fit:contain;display:block;border-radius:8px}
-.top-nav{display:flex;align-items:center;gap:25px}.top-nav button{background:none;border:none;color:#999;font-size:14px}
-.top-nav button:hover,.top-nav button.active{color:#fff}
-.top-right{margin-left:auto;display:flex;align-items:center;gap:15px}
-.profile-button{width:44px;height:44px;border-radius:50%;border:1px solid #333;background:#181818;overflow:visible;padding:0;position:relative;display:flex;align-items:center;justify-content:center}
-.profile-button img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none}.profile-fallback{width:100%;height:100%;display:flex;justify-content:center;align-items:center;font-weight:bold;border-radius:50%}
-.profile-edit-icon{position:absolute;right:-2px;bottom:-2px;width:19px;height:19px;border-radius:50%;background:#111;border:1px solid #555;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.profile-edit-icon svg{width:12px;height:12px;fill:none;stroke:#fff;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.profile-menu{position:fixed;right:20px;top:60px;width:240px;background:#111;border:1px solid #292929;border-radius:14px;padding:8px;display:none;z-index:200;box-shadow:0 20px 50px rgba(0,0,0,.6)}
-.profile-menu.active{display:block}.profile-info{padding:13px;border-bottom:1px solid #292929;margin-bottom:6px}
-.profile-info strong{display:block;margin-bottom:4px}.profile-info span{color:#777;font-size:12px}
-.profile-menu button{width:100%;text-align:left;background:none;border:none;color:#ddd;padding:12px;border-radius:8px}
-.profile-menu button:hover{background:#1c1c1c;color:#fff}.profile-menu .danger{color:#ff6868}
-.tools{position:fixed;top:70px;left:0;bottom:0;width:210px;border-right:1px solid #202020;background:#0b0b0b;padding:20px 12px;z-index:50}
-.tools-title{color:#666;font-size:10px;letter-spacing:2px;padding:0 12px;margin-bottom:10px}
-.tool-button{width:100%;height:45px;border:none;background:none;color:#999;border-radius:9px;text-align:left;padding:0 12px;font-size:14px;margin-bottom:3px;display:flex;align-items:center;gap:11px}.tool-icon{width:19px;height:19px;flex:0 0 19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.tool-button:hover,.tool-button.active{background:#181818;color:#fff}
-.my-channel-tool{display:none;align-items:center;gap:10px}.my-channel-tool.visible{display:flex}
-.channel-mini-logo{width:28px;height:28px;border-radius:50%;object-fit:cover;background:#222}
-.main{margin-left:210px;padding-top:70px;min-height:100vh}
-.page-section{display:none;padding:35px}.page-section.active{display:block}
-.hero{min-height:390px;border:1px solid #222;border-radius:18px;background:linear-gradient(90deg,#111 0%,#0d0d0d 60%,#090909 100%);display:flex;align-items:flex-end;padding:40px;margin-bottom:40px}
-.hero-content{max-width:600px}.hero-label{color:#777;font-size:11px;letter-spacing:3px;margin-bottom:12px}
-.hero h2{font-size:44px;margin-bottom:12px}.hero p{color:#888;line-height:1.6;margin-bottom:20px}
-.hero-button{background:#fff;color:#111;border:none;border-radius:9px;padding:13px 22px;font-weight:bold}
-.content-row{margin-bottom:38px}.content-row h3{font-size:20px;margin-bottom:15px}
-.empty-content{height:150px;border:1px solid #222;border-radius:14px;background:#0d0d0d;display:flex;align-items:center;justify-content:center;color:#666;font-size:14px}
-.page-title{font-size:32px;margin-bottom:10px}.page-description{color:#777;margin-bottom:30px}
-.empty-page{min-height:300px;border:1px solid #222;border-radius:15px;display:flex;align-items:center;justify-content:center;color:#666}
-.profile-page-card{max-width:650px;background:#111;border:1px solid #292929;border-radius:18px;padding:35px}
-.profile-picture-area{display:flex;justify-content:center;margin-bottom:30px}.profile-picture-wrapper{position:relative;width:150px;height:150px}
-.profile-page-image,.profile-page-fallback{width:150px;height:150px;border-radius:50%;border:2px solid #292929;background:#202020}
-.profile-page-image{object-fit:cover;display:none}.profile-page-fallback{display:flex;align-items:center;justify-content:center;font-size:55px;font-weight:bold}
-.edit-profile-picture{position:absolute;right:2px;bottom:2px;width:46px;height:46px;border-radius:50%;border:3px solid #111;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;font-size:20px}.edit-profile-picture svg{width:21px;height:21px;fill:none;stroke:#111;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.profile-data{border-top:1px solid #292929}.profile-data-row{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid #222}
-.profile-data-label{color:#777;font-size:13px}.profile-data-value{color:#fff;font-size:14px;text-align:right;word-break:break-word}
-.profile-save-status{text-align:center;color:#888;font-size:13px;margin-top:18px;min-height:18px}.hidden-file-input{display:none}
-.channel-header{border:1px solid #222;border-radius:18px;padding:30px;background:#0d0d0d;display:flex;align-items:center;gap:20px;margin-bottom:30px}
-.channel-header-logo{width:90px;height:90px;border-radius:50%;object-fit:cover;background:#222}
-.channel-header h2{font-size:30px;margin-bottom:6px}.channel-header p{color:#777}
-
-/* CREATOR SETUP MODAL */
-.creator-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}
-.creator-overlay.active{display:flex}
-.creator-modal{width:min(470px,100%);background:#101010;border:1px solid #303030;border-radius:18px;box-shadow:0 30px 100px rgba(0,0,0,.8);overflow:hidden;position:relative}
-.creator-top{padding:22px 24px 0}
-.creator-close{position:absolute;top:14px;right:15px;width:32px;height:32px;border:1px solid #292929;border-radius:50%;background:#181818;color:#aaa;font-size:18px;line-height:1}
-.creator-close:hover{color:#fff;background:#222}
-.creator-title{text-align:center;font-size:22px;font-weight:800;margin-bottom:6px}.creator-subtitle{text-align:center;color:#777;font-size:13px;margin-bottom:20px}
-.creator-progress-head{display:flex;justify-content:flex-end;align-items:center;margin-bottom:7px}
-.creator-step-count{font-size:11px;color:#888;letter-spacing:.5px}
-.boss-track{height:9px;background:#1d1d1d;border:1px solid #2d2d2d;border-radius:999px;overflow:hidden}
-.boss-fill{height:100%;width:0%;background:#fff;border-radius:999px;transition:width .45s ease}
-.creator-body{position:relative;min-height:315px;padding:24px}
-.creator-step{display:none;animation:stepIn .35s ease}.creator-step.active{display:block}
-@keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}
-.creator-step h3{text-align:center;font-size:19px;margin-bottom:8px}.creator-step p{text-align:center;color:#777;font-size:13px;line-height:1.5;margin-bottom:22px}
-.creator-logo-area{display:flex;flex-direction:column;align-items:center}
-.creator-logo-preview{width:108px;height:108px;border-radius:50%;background:#202020;border:1px solid #333;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:15px}
-.creator-logo-preview img{width:100%;height:100%;object-fit:cover;display:none}.creator-logo-fallback{font-size:36px;color:#666}
-.upload-button{background:#fff;color:#111;border:0;border-radius:9px;padding:11px 20px;font-weight:700}
-.creator-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
-.creator-action{height:44px;border-radius:9px;padding:0 20px;border:1px solid #333;background:#181818;color:#ddd;font-weight:700}
-.creator-action.primary{background:#fff;color:#111;border-color:#fff;min-width:120px}
-.creator-action:disabled{opacity:.45;cursor:not-allowed}
-.specialty-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.specialty-option{position:relative}.specialty-option input{position:absolute;opacity:0;pointer-events:none}
-.specialty-option span{display:flex;align-items:center;justify-content:center;min-height:45px;padding:8px;border:1px solid #303030;border-radius:9px;background:#181818;color:#aaa;text-align:center;font-size:13px;transition:.2s}
-.specialty-option input:checked+span{background:#fff;color:#111;border-color:#fff}
-.language-input-note{color:#666!important;font-size:11px!important;margin-top:8px!important;margin-bottom:0!important}
-.creator-status{text-align:center;color:#888;font-size:12px;min-height:17px;margin-top:12px}
-.creator-status.error{color:#ff6868}
-
-/* RESPONSIVE */
-@media(max-width:850px){
-.top-nav{display:none}.tools{width:75px}.tools-title{display:none}.tool-button{font-size:0;text-align:center;padding:0;justify-content:center}.tool-icon{width:19px;height:19px}.my-channel-tool{justify-content:center}.my-channel-tool span{display:none}.main{margin-left:75px}.page-section{padding:20px}.hero{padding:25px}.hero h2{font-size:32px}
-}
-@media(max-width:500px){
-.topbar{padding:0 14px}.matrix-brand{width:48px}.matrix-brand img{width:40px;height:40px}.tools{width:65px}.main{margin-left:65px}.page-section{padding:15px}.hero{min-height:320px;padding:20px}.profile-page-card{padding:22px}.profile-data-row{flex-direction:column;gap:7px}.profile-data-value{text-align:left}
-.creator-overlay{padding:10px}.creator-modal{border-radius:14px}.creator-body{padding:20px;min-height:330px}.creator-top{padding:20px 20px 0}
-}
+:root{--bg:#080808;--panel:#111;--panel2:#0d0d0d;--line:#292929;--line2:#202020;--text:#fff;--muted:#888;--soft:#aaa;--input:#181818;--accent:#fff;--accentText:#111;--danger:#ff6868;--shadow:rgba(0,0,0,.55)}
+body.light{--bg:#f5f5f5;--panel:#fff;--panel2:#fafafa;--line:#d9d9d9;--line2:#e7e7e7;--text:#111;--muted:#707070;--soft:#555;--input:#f1f1f1;--accent:#111;--accentText:#fff;--shadow:rgba(0,0,0,.14)}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.hidden{display:none!important}
+.auth-page{min-height:100vh;display:none;justify-content:center;align-items:center}.auth-container{width:100%;max-width:470px;padding:30px 20px}.screen{display:none}.screen.active{display:block}.quadra{text-align:center;color:var(--muted);font-size:11px;letter-spacing:4px;margin-bottom:12px}.logo{text-align:center;font-size:46px;font-weight:900;letter-spacing:8px;margin-bottom:10px}.tagline{text-align:center;color:var(--muted);font-size:14px;margin-bottom:35px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:34px 30px;box-shadow:0 20px 60px var(--shadow)}h1{text-align:center;font-size:25px;margin-bottom:10px}.description{text-align:center;color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:27px}.google-button,.continue-button{width:100%;height:52px;border:none;border-radius:10px;font-size:15px;font-weight:bold;transition:.2s;background:var(--accent);color:var(--accentText)}.google-button:hover,.continue-button:hover,.primary:hover{transform:translateY(-2px)}.status{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}.terms{color:var(--muted);text-align:center;font-size:11px;line-height:1.5;margin-top:20px}.footer{color:var(--muted);text-align:center;font-size:11px;margin-top:23px}.input-group{margin-bottom:16px}label{display:block;font-size:13px;color:var(--soft);margin-bottom:7px}input,select,textarea{width:100%;background:var(--input);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:12px 14px;outline:none;font-size:14px}input,select{height:48px}textarea{min-height:120px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--soft)}select option{background:var(--input)}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.note{color:var(--muted);font-size:11px;line-height:1.5;margin-top:4px;margin-bottom:15px}.error{display:none;color:var(--danger);font-size:12px;margin-top:8px}.success{color:#76d98b!important}
+.app{display:none;min-height:100vh;background:var(--bg)}.app.active{display:block}.topbar{height:70px;border-bottom:1px solid var(--line2);background:var(--bg);display:flex;align-items:center;padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:100}.matrix-brand{width:150px;height:48px;display:flex;align-items:center;cursor:pointer;overflow:hidden}.matrix-brand img{width:44px;height:44px;object-fit:contain;display:block;border-radius:8px}.top-nav{display:flex;align-items:center;gap:25px}.top-nav button{background:none;border:none;color:var(--muted);font-size:14px}.top-nav button:hover,.top-nav button.active{color:var(--text)}.top-right{margin-left:auto}.profile-button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);overflow:visible;padding:0;position:relative;display:flex;align-items:center;justify-content:center}.profile-button img{width:100%;height:100%;object-fit:cover;border-radius:50%;display:none}.profile-fallback{width:100%;height:100%;display:flex;justify-content:center;align-items:center;font-weight:bold;border-radius:50%}.profile-edit-icon{position:absolute;right:-2px;bottom:-2px;width:19px;height:19px;border-radius:50%;background:var(--panel);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;pointer-events:none}.profile-edit-icon svg,.tool-icon,.edit-profile-picture svg,.ui-icon{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.profile-edit-icon svg{width:12px;height:12px}.profile-menu{position:fixed;right:20px;top:60px;width:240px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px;display:none;z-index:200;box-shadow:0 20px 50px var(--shadow)}.profile-menu.active{display:block}.profile-info{padding:13px;border-bottom:1px solid var(--line);margin-bottom:6px}.profile-info strong{display:block;margin-bottom:4px}.profile-info span{color:var(--muted);font-size:12px}.profile-menu button{width:100%;text-align:left;background:none;border:none;color:var(--soft);padding:12px;border-radius:8px}.profile-menu button:hover{background:var(--panel2);color:var(--text)}.profile-menu .danger{color:var(--danger)}
+.tools{position:fixed;top:70px;left:0;bottom:0;width:210px;border-right:1px solid var(--line2);background:var(--bg);padding:20px 12px;z-index:50}.tools-title{color:var(--muted);font-size:10px;letter-spacing:2px;padding:0 12px;margin-bottom:10px}.tool-button{width:100%;height:45px;border:none;background:none;color:var(--muted);border-radius:9px;text-align:left;padding:0 12px;font-size:14px;margin-bottom:3px;display:flex;align-items:center;gap:11px}.tool-icon{width:19px;height:19px;flex:0 0 19px}.tool-button:hover,.tool-button.active{background:var(--panel);color:var(--text)}.my-channel-tool{display:none}.my-channel-tool.visible{display:flex}.channel-mini-logo{width:28px;height:28px;border-radius:50%;object-fit:cover;background:var(--panel2)}.main{margin-left:210px;padding-top:70px;min-height:100vh}.page-section{display:none;padding:35px}.page-section.active{display:block}.hero{min-height:390px;border:1px solid var(--line);border-radius:18px;background:var(--panel2);display:flex;align-items:flex-end;padding:40px;margin-bottom:40px}.hero-content{max-width:650px}.hero-label{color:var(--muted);font-size:11px;letter-spacing:3px;margin-bottom:12px}.hero h2{font-size:44px;margin-bottom:12px}.hero p{color:var(--muted);line-height:1.6;margin-bottom:20px}.hero-button,.primary{background:var(--accent);color:var(--accentText);border:1px solid var(--accent);border-radius:9px;padding:13px 22px;font-weight:bold}.content-row{margin-bottom:38px}.content-row h3{font-size:20px;margin-bottom:15px}.empty-content,.empty-page{min-height:150px;border:1px solid var(--line);border-radius:14px;background:var(--panel2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px}.empty-page{min-height:300px}.page-title{font-size:32px;margin-bottom:10px}.page-description{color:var(--muted);margin-bottom:30px}.profile-page-card,.settings-card,.channel-card,.owner-card{max-width:760px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px}.profile-picture-area{display:flex;justify-content:center;margin-bottom:30px}.profile-picture-wrapper{position:relative;width:150px;height:150px}.profile-page-image,.profile-page-fallback{width:150px;height:150px;border-radius:50%;border:2px solid var(--line);background:var(--panel2)}.profile-page-image{object-fit:cover;display:none}.profile-page-fallback{display:flex;align-items:center;justify-content:center;font-size:55px;font-weight:bold}.edit-profile-picture{position:absolute;right:2px;bottom:2px;width:46px;height:46px;border-radius:50%;border:3px solid var(--panel);background:var(--accent);color:var(--accentText);display:flex;align-items:center;justify-content:center}.edit-profile-picture svg{width:21px;height:21px}.profile-data{border-top:1px solid var(--line)}.profile-data-row{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid var(--line2)}.profile-data-label{color:var(--muted);font-size:13px}.profile-data-value{color:var(--text);font-size:14px;text-align:right;word-break:break-word}.profile-save-status{text-align:center;color:var(--muted);font-size:13px;margin-top:18px;min-height:18px}.hidden-file-input{display:none}
+.settings-card{max-width:700px}.settings-group{padding:22px 0;border-bottom:1px solid var(--line2)}.settings-group:first-child{padding-top:0}.settings-group:last-child{border-bottom:0}.settings-label{font-size:15px;font-weight:700;margin-bottom:6px}.settings-help{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}.theme-options{display:flex;gap:10px}.theme-option{flex:1;border:1px solid var(--line);background:var(--panel2);color:var(--soft);padding:14px;border-radius:10px;text-align:left}.theme-option.active{border-color:var(--text);color:var(--text)}.theme-option strong{display:block;margin-bottom:4px}.donate-button{background:var(--accent);color:var(--accentText);border:1px solid var(--accent);border-radius:9px;padding:12px 18px;font-weight:700}
+.channel-header{border:1px solid var(--line);border-radius:18px;padding:30px;background:var(--panel2);display:flex;align-items:center;gap:20px;margin-bottom:25px}.channel-header-logo{width:90px;height:90px;border-radius:50%;object-fit:cover;background:var(--panel)}.channel-header h2{font-size:30px;margin-bottom:6px}.channel-header p{color:var(--muted)}.channel-meta{margin-top:8px;color:var(--muted);font-size:12px}.channel-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.outline-button{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:9px;padding:11px 16px;font-weight:700}.outline-button:hover{background:var(--panel2)}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}.video-card{border:1px solid var(--line);border-radius:15px;background:var(--panel);overflow:hidden}.video-thumb{height:155px;background:var(--panel2);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:12px;overflow:hidden}.video-thumb img{width:100%;height:100%;object-fit:cover}.video-card-body{padding:15px}.video-card-title{font-size:16px;font-weight:700;margin-bottom:6px}.video-card-desc{font-size:12px;color:var(--muted);line-height:1.5;min-height:36px}.video-card-meta{font-size:11px;color:var(--muted);margin-top:10px}.video-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.video-action{background:var(--panel2);border:1px solid var(--line);color:var(--soft);border-radius:8px;padding:8px 10px;font-size:12px}.video-action.active{color:var(--text);border-color:var(--text)}.video-action svg{width:14px;height:14px;vertical-align:-3px;margin-right:4px}.video-comments{display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:12px}.video-comments.open{display:block}.comment-list{max-height:220px;overflow:auto;margin-bottom:10px}.comment{padding:9px 0;border-bottom:1px solid var(--line2)}.comment strong{font-size:12px}.comment p{font-size:12px;color:var(--soft);margin-top:4px;line-height:1.4}.comment-form{display:flex;gap:7px}.comment-form input{height:38px;padding:8px 10px}.comment-form button{border:0;border-radius:8px;background:var(--accent);color:var(--accentText);padding:0 13px;font-weight:700}.search-results{margin-top:20px}.search-item{padding:14px;border:1px solid var(--line);background:var(--panel);border-radius:10px;margin-bottom:9px}.search-item strong{display:block;margin-bottom:5px}.search-item span{font-size:12px;color:var(--muted)}
+.creator-overlay{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(7px);display:none;align-items:center;justify-content:center;padding:20px;z-index:1000}.creator-overlay.active{display:flex}.creator-modal{width:min(500px,100%);background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 100px rgba(0,0,0,.8);overflow:hidden;position:relative}.creator-close{position:absolute;top:14px;right:15px;width:32px;height:32px;border:1px solid var(--line);border-radius:50%;background:var(--panel2);color:var(--muted);font-size:18px}.creator-top{padding:22px 24px 0}.creator-title{text-align:center;font-size:22px;font-weight:800;margin-bottom:6px}.creator-subtitle{text-align:center;color:var(--muted);font-size:13px;margin-bottom:20px}.creator-progress-head{display:flex;justify-content:flex-end;margin-bottom:7px}.creator-step-count{font-size:11px;color:var(--muted)}.boss-track{height:9px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;overflow:hidden}.boss-fill{height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .45s ease}.creator-body{position:relative;min-height:360px;padding:24px}.creator-step{display:none;animation:stepIn .35s ease}.creator-step.active{display:block}@keyframes stepIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:translateX(0)}}.creator-step h3{text-align:center;font-size:19px;margin-bottom:8px}.creator-step p{text-align:center;color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:20px}.creator-logo-area{display:flex;flex-direction:column;align-items:center}.creator-logo-preview{width:108px;height:108px;border-radius:50%;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:15px}.creator-logo-preview img{width:100%;height:100%;object-fit:cover;display:none}.creator-logo-fallback{font-size:36px;color:var(--muted)}.upload-button{background:var(--accent);color:var(--accentText);border:0;border-radius:9px;padding:11px 20px;font-weight:700}.creator-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}.creator-action{height:44px;border-radius:9px;padding:0 20px;border:1px solid var(--line);background:var(--panel2);color:var(--soft);font-weight:700}.creator-action.primary{background:var(--accent);color:var(--accentText);border-color:var(--accent);min-width:120px}.creator-status{text-align:center;color:var(--muted);font-size:12px;min-height:17px;margin-top:12px}.creator-status.error{color:var(--danger)}
+.form-card{max-width:760px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}.form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}.owner-video{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:15px;margin-bottom:10px}.owner-video h4{margin-bottom:6px}.owner-video p{font-size:12px;color:var(--muted);margin-bottom:12px}.owner-video-actions{display:flex;gap:8px}.approve{background:var(--accent);color:var(--accentText);border:1px solid var(--accent);border-radius:8px;padding:9px 13px;font-weight:700}.reject{background:transparent;color:var(--danger);border:1px solid var(--danger);border-radius:8px;padding:9px 13px;font-weight:700}
+.modal-small{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;padding:20px;z-index:1200}.modal-small.active{display:flex}.modal-small-card{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}.modal-small-card h3{margin-bottom:8px}.modal-small-card p{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:18px}.modal-small-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:15px}
+@media(max-width:850px){.top-nav{display:none}.tools{width:75px}.tools-title{display:none}.tool-button{font-size:0;text-align:center;padding:0;justify-content:center}.tool-icon{width:19px;height:19px}.my-channel-tool{justify-content:center}.my-channel-tool span{display:none}.main{margin-left:75px}.page-section{padding:20px}.hero{padding:25px}.hero h2{font-size:32px}}
+@media(max-width:500px){.topbar{padding:0 14px}.matrix-brand{width:48px}.matrix-brand img{width:40px;height:40px}.tools{width:65px}.main{margin-left:65px}.page-section{padding:15px}.hero{min-height:320px;padding:20px}.profile-page-card,.settings-card,.form-card{padding:20px}.profile-data-row{flex-direction:column;gap:7px}.profile-data-value{text-align:left}.creator-overlay{padding:10px}.creator-modal{border-radius:14px}.creator-body{padding:20px}.creator-top{padding:20px 20px 0}.row{grid-template-columns:1fr}.theme-options{flex-direction:column}}
 </style>
 </head>
-
 <body>
 
-<!-- AUTHENTICATION -->
-<div class="auth-page" id="authPage">
-<div class="auth-container">
+<div class="auth-page" id="authPage"><div class="auth-container">
+<section class="screen active" id="signInScreen"><div class="quadra">QUADRA PRESENTS</div><div class="logo">MATRIX</div><div class="tagline">Movies. Creators. Stories.</div><div class="card"><h1>Welcome to MATRIX</h1><p class="description">Sign in to continue and explore movies, creators, and original content.</p><button class="google-button" id="googleButton">Continue with Google</button><p class="status" id="loginStatus"></p><p class="terms">By continuing, you agree to the MATRIX Terms and Privacy Policy.</p></div><div class="footer">© 2026 QUADRA</div></section>
+<section class="screen" id="idScreen"><div class="quadra">QUADRA</div><div class="logo">MATRIX</div><div class="card"><h1>Create your MATRIX ID</h1><p class="description">Your MATRIX ID is your unique account identifier.</p><div class="input-group"><label for="matrixId">MATRIX ID</label><input id="matrixId" type="text" placeholder="@yourid" maxlength="20" autocomplete="off"></div><div class="error" id="idError"></div><button class="continue-button" id="idContinue">Continue</button></div></section>
+<section class="screen" id="usernameScreen"><div class="quadra">QUADRA</div><div class="logo">MATRIX</div><div class="card"><h1>Choose your Username</h1><p class="description">This is the name people will see on MATRIX.</p><div class="input-group"><label for="username">Username</label><input id="username" type="text" placeholder="Choose a username" maxlength="30" autocomplete="off"></div><div class="error" id="usernameError"></div><button class="continue-button" id="usernameContinue">Continue</button></div></section>
+<section class="screen" id="detailsScreen"><div class="quadra">QUADRA</div><div class="logo">MATRIX</div><div class="card"><h1>Complete your account</h1><p class="description">Add your information to finish creating your MATRIX account.</p><div class="input-group"><label for="fullName">Full Name</label><input id="fullName" type="text" placeholder="First name and surname" autocomplete="name"></div><div class="input-group"><label for="country">Country</label><select id="country"><option value="">Select country</option><option>India</option><option>United States</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>Japan</option><option>Singapore</option><option>United Arab Emirates</option></select></div><div class="input-group"><label for="state">State / Province</label><input id="state" type="text" placeholder="State / Province"></div><div class="row"><div class="input-group"><label for="age">Age</label><input id="age" type="number" min="13" max="120" placeholder="Age"></div><div class="input-group"><label for="gender">Gender</label><select id="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select></div></div><p class="note">Age and gender are used for content restrictions and age-appropriate experiences.</p><div class="error" id="detailsError"></div><button class="continue-button" id="createAccount">Create MATRIX Account</button></div></section>
+</div></div>
 
-<section class="screen active" id="signInScreen">
-<div class="quadra">QUADRA PRESENTS</div>
-<div class="logo">MATRIX</div>
-<div class="tagline">Movies. Creators. Stories.</div>
-<div class="card">
-<h1>Welcome to MATRIX</h1>
-<p class="description">Sign in to continue and explore movies, creators, and original content.</p>
-<button class="google-button" id="googleButton">Continue with Google</button>
-<p class="status" id="loginStatus"></p>
-<p class="terms">By continuing, you agree to the MATRIX Terms and Privacy Policy.</p>
-</div>
-<div class="footer">© 2026 QUADRA</div>
-</section>
-
-<section class="screen" id="idScreen">
-<div class="quadra">QUADRA</div><div class="logo">MATRIX</div>
-<div class="card">
-<h1>Create your MATRIX ID</h1>
-<p class="description">Your MATRIX ID is your unique account identifier.</p>
-<div class="input-group"><label for="matrixId">MATRIX ID</label><input id="matrixId" type="text" placeholder="@yourid" maxlength="20" autocomplete="off"></div>
-<div class="error" id="idError"></div>
-<button class="continue-button" id="idContinue">Continue</button>
-</div>
-</section>
-
-<section class="screen" id="usernameScreen">
-<div class="quadra">QUADRA</div><div class="logo">MATRIX</div>
-<div class="card">
-<h1>Choose your Username</h1>
-<p class="description">This is the name people will see on MATRIX.</p>
-<div class="input-group"><label for="username">Username</label><input id="username" type="text" placeholder="Choose a username" maxlength="30" autocomplete="off"></div>
-<div class="error" id="usernameError"></div>
-<button class="continue-button" id="usernameContinue">Continue</button>
-</div>
-</section>
-
-<section class="screen" id="detailsScreen">
-<div class="quadra">QUADRA</div><div class="logo">MATRIX</div>
-<div class="card">
-<h1>Complete your account</h1>
-<p class="description">Add your information to finish creating your MATRIX account.</p>
-<div class="input-group"><label for="fullName">Full Name</label><input id="fullName" type="text" placeholder="First name and surname" autocomplete="name"></div>
-<div class="input-group"><label for="country">Country</label>
-<select id="country"><option value="">Select country</option><option>India</option><option>United States</option><option>United Kingdom</option><option>Canada</option><option>Australia</option><option>Germany</option><option>France</option><option>Japan</option><option>Singapore</option><option>United Arab Emirates</option></select></div>
-<div class="input-group"><label for="state">State / Province</label><input id="state" type="text" placeholder="State / Province"></div>
-<div class="row">
-<div class="input-group"><label for="age">Age</label><input id="age" type="number" min="13" max="120" placeholder="Age"></div>
-<div class="input-group"><label for="gender">Gender</label><select id="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select></div>
-</div>
-<p class="note">Age and gender are used for content restrictions and age-appropriate experiences.</p>
-<div class="error" id="detailsError"></div>
-<button class="continue-button" id="createAccount">Create MATRIX Account</button>
-</div>
-</section>
-
-</div>
-</div>
-
-<!-- MATRIX APP -->
 <div class="app" id="app">
-
-<header class="topbar">
-<div class="matrix-brand" id="matrixBrand" aria-label="MATRIX home"><img src="./MATRIX-logo.png?v=2" alt="MATRIX"></div>
-<nav class="top-nav">
-<button data-page="home" class="active">Home</button>
-<button data-page="movies">Movies</button>
-<button data-page="videos">Videos</button>
-<button data-page="search">Search</button>
-</nav>
-<div class="top-right">
-<button class="profile-button" id="profileButton" type="button" aria-label="Open profile menu">
-<img id="profileImage" src="" alt="Profile"><div class="profile-fallback" id="profileFallback"></div>
-<span class="profile-edit-icon" aria-hidden="true">
-<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path><path d="M13.5 6.5l4 4"></path></svg>
-</span>
-</button>
-</div>
-</header>
-
-<div class="profile-menu" id="profileMenu">
-<div class="profile-info"><strong id="profileName">User</strong><span id="profileMatrixId">@user</span></div>
-<button id="profilePageButton">Profile</button>
-<button id="createChannelButton">Create Channel</button>
-<button data-page="settings">Settings</button>
-<button class="danger" id="signOut">Sign Out</button>
-</div>
-
-<aside class="tools">
-<div class="tools-title">TOOLS</div>
-<button class="tool-button active" data-page="home"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg><span>Home</span></button>
-<button class="tool-button" data-page="history"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7v5l3 2"></path></svg><span>Watch History</span></button>
-<button class="tool-button" data-page="watchlist"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4.5h12v16l-6-3.5-6 3.5z"></path></svg><span>Watchlist</span></button>
-<button class="tool-button my-channel-tool" id="myChannelButton" data-page="channel">
-<img class="channel-mini-logo" id="channelMiniLogo" src="" alt=""><span>My Channel</span>
-</button>
-</aside>
-
+<header class="topbar"><div class="matrix-brand" id="matrixBrand"><img src="./MATRIX-logo.png?v=4" alt="MATRIX"></div><nav class="top-nav"><button data-page="home" class="active">Home</button><button data-page="movies">Movies</button><button data-page="videos">Videos</button><button data-page="search">Search</button></nav><div class="top-right"><button class="profile-button" id="profileButton" aria-label="Open profile menu"><img id="profileImage" src="" alt="Profile"><div class="profile-fallback" id="profileFallback"></div><span class="profile-edit-icon"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path><path d="M13.5 6.5l4 4"></path></svg></span></button></div></header>
+<div class="profile-menu" id="profileMenu"><div class="profile-info"><strong id="profileName">User</strong><span id="profileMatrixId">@user</span></div><button id="profilePageButton">Profile</button><button id="createChannelButton">Create Channel</button><button id="ownerReviewButton" class="hidden">Owner Review</button><button data-page="settings">Settings</button><button class="danger" id="signOut">Sign Out</button></div>
+<aside class="tools"><div class="tools-title">TOOLS</div><button class="tool-button active" data-page="home"><svg class="tool-icon" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"></path><path d="M5.5 9.5V21h13V9.5"></path><path d="M9.5 21v-6h5v6"></path></svg><span>Home</span></button><button class="tool-button" data-page="history"><svg class="tool-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7v5l3 2"></path></svg><span>Watch History</span></button><button class="tool-button" data-page="watchlist"><svg class="tool-icon" viewBox="0 0 24 24"><path d="M6 4.5h12v16l-6-3.5-6 3.5z"></path></svg><span>Watchlist</span></button><button class="tool-button my-channel-tool" id="myChannelButton" data-page="channel"><img class="channel-mini-logo" id="channelMiniLogo" src="" alt=""><span>My Channel</span></button></aside>
 <main class="main">
-
-<section class="page-section active" id="page-home">
-<div class="hero"><div class="hero-content"><div class="hero-label">MATRIX</div><h2>Welcome to MATRIX.</h2><p>Movies, videos, creators and original content will appear here as MATRIX grows.</p><button class="hero-button" id="browseMovies">Browse Movies</button></div></div>
-<div class="content-row"><h3>Movies</h3><div class="empty-content">No movies available yet.</div></div>
-<div class="content-row"><h3>Videos</h3><div class="empty-content">No videos available yet.</div></div>
-<div class="content-row"><h3>MATRIX Originals</h3><div class="empty-content">No original content available yet.</div></div>
-</section>
-
+<section class="page-section active" id="page-home"><div class="hero"><div class="hero-content"><div class="hero-label">MATRIX</div><h2>Welcome to MATRIX.</h2><p>Movies, videos, creators and original content will appear here as MATRIX grows.</p><button class="hero-button" id="browseMovies">Browse Movies</button></div></div><div class="content-row"><h3>Movies</h3><div class="empty-content">No movies available yet.</div></div><div class="content-row"><h3>Videos</h3><div class="empty-content">No videos available yet.</div></div><div class="content-row"><h3>MATRIX Originals</h3><div class="empty-content">No original content available yet.</div></div></section>
 <section class="page-section" id="page-movies"><h2 class="page-title">Movies</h2><p class="page-description">Movies uploaded to MATRIX will appear here.</p><div class="empty-page">No movies available yet.</div></section>
-<section class="page-section" id="page-videos"><h2 class="page-title">Videos</h2><p class="page-description">Videos from MATRIX creators will appear here.</p><div class="empty-page">No videos available yet.</div></section>
-<section class="page-section" id="page-search"><h2 class="page-title">Search</h2><p class="page-description">Search for movies, videos and channels.</p><div class="input-group"><input id="searchInput" type="search" placeholder="Search MATRIX"></div><div class="empty-page">Search results will appear here.</div></section>
+<section class="page-section" id="page-videos"><h2 class="page-title">Videos</h2><p class="page-description">Published videos from MATRIX creators.</p><div id="videoGrid" class="video-grid"></div><div class="empty-page hidden" id="videoEmpty">No videos available yet.</div></section>
+<section class="page-section" id="page-search"><h2 class="page-title">Search</h2><p class="page-description">Search for movies, videos and channels.</p><div class="input-group"><input id="searchInput" type="search" placeholder="Search MATRIX"></div><div class="search-results" id="searchResults"></div></section>
 <section class="page-section" id="page-history"><h2 class="page-title">Watch History</h2><p class="page-description">Videos and movies you watch will appear here.</p><div class="empty-page">Your watch history is empty.</div></section>
 <section class="page-section" id="page-watchlist"><h2 class="page-title">Watchlist</h2><p class="page-description">Content you save will appear here.</p><div class="empty-page">Your watchlist is empty.</div></section>
-<section class="page-section" id="page-settings"><h2 class="page-title">Settings</h2><p class="page-description">Manage your MATRIX account settings.</p><div class="empty-page">Settings will be added here.</div></section>
+<section class="page-section" id="page-settings"><h2 class="page-title">Settings</h2><p class="page-description">Manage your MATRIX experience.</p><div class="settings-card"><div class="settings-group"><div class="settings-label">Theme</div><div class="settings-help">Choose how MATRIX looks on your device. Dark is the default.</div><div class="theme-options"><button class="theme-option" id="darkTheme"><strong>Dark</strong><span>Default MATRIX appearance</span></button><button class="theme-option" id="lightTheme"><strong>Light</strong><span>Light MATRIX appearance</span></button></div><p class="status" id="themeStatus"></p></div><div class="settings-group"><div class="settings-label">Support MATRIX</div><div class="settings-help">Donations support MATRIX / QUADRA itself. They are not payments to creators or channels.</div><button class="donate-button" id="donateButton">Donate to MATRIX</button></div></div></section>
+<section class="page-section" id="page-profile"><h2 class="page-title">Profile</h2><p class="page-description">Manage your MATRIX profile.</p><div class="profile-page-card"><div class="profile-picture-area"><div class="profile-picture-wrapper"><img class="profile-page-image" id="profilePageImage" src="" alt="Profile picture"><div class="profile-page-fallback" id="profilePageFallback"></div><button class="edit-profile-picture" id="editProfilePicture" aria-label="Change profile picture"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path><path d="M13.5 6.5l4 4"></path></svg></button><input type="file" id="profileFileInput" class="hidden-file-input" accept="image/png,image/jpeg,image/webp"></div></div><div class="profile-data"><div class="profile-data-row"><span class="profile-data-label">Username</span><span class="profile-data-value" id="profilePageUsername">—</span></div><div class="profile-data-row"><span class="profile-data-label">MATRIX ID</span><span class="profile-data-value" id="profilePageMatrixId">—</span></div><div class="profile-data-row"><span class="profile-data-label">Full Name</span><span class="profile-data-value" id="profilePageFullName">—</span></div><div class="profile-data-row"><span class="profile-data-label">Country</span><span class="profile-data-value" id="profilePageCountry">—</span></div><div class="profile-data-row"><span class="profile-data-label">State / Province</span><span class="profile-data-value" id="profilePageState">—</span></div><div class="profile-data-row"><span class="profile-data-label">Role</span><span class="profile-data-value" id="profilePageRole">Member</span></div></div><p class="profile-save-status" id="profileSaveStatus"></p></div></section>
+<section class="page-section" id="page-channel"><div class="channel-header"><img class="channel-header-logo" id="channelHeaderLogo" src="" alt="Channel logo"><div><h2 id="channelHeaderName">My Channel</h2><p id="channelHeaderHandle">@channel</p><div class="channel-meta" id="channelHeaderSpecialty"></div></div></div><div class="channel-actions"><button class="outline-button" id="openUploadVideo">Submit a Video</button></div><div class="content-row" style="margin-top:25px"><h3>Your Channel</h3><div class="channel-card"><p id="channelAbout" style="color:var(--muted);line-height:1.6">Your channel information will appear here.</p><p id="channelLanguages" style="color:var(--muted);font-size:12px;margin-top:12px"></p></div></div><div class="content-row"><h3>Your Videos</h3><div id="myVideoList"></div></div></section>
+<section class="page-section" id="page-owner-review"><h2 class="page-title">Owner Review</h2><p class="page-description">Review creator uploads before they become published MATRIX content.</p><div class="owner-card" id="ownerReviewList"></div></section>
+</main></div>
 
-<section class="page-section" id="page-profile">
-<h2 class="page-title">Profile</h2><p class="page-description">Manage your MATRIX profile.</p>
-<div class="profile-page-card">
-<div class="profile-picture-area"><div class="profile-picture-wrapper">
-<img class="profile-page-image" id="profilePageImage" src="" alt="Profile picture"><div class="profile-page-fallback" id="profilePageFallback"></div>
-<button class="edit-profile-picture" id="editProfilePicture" title="Change profile picture" aria-label="Change profile picture"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path><path d="M13.5 6.5l4 4"></path></svg></button>
-<input type="file" id="profileFileInput" class="hidden-file-input" accept="image/png,image/jpeg,image/webp">
-</div></div>
-<div class="profile-data">
-<div class="profile-data-row"><span class="profile-data-label">Username</span><span class="profile-data-value" id="profilePageUsername">—</span></div>
-<div class="profile-data-row"><span class="profile-data-label">MATRIX ID</span><span class="profile-data-value" id="profilePageMatrixId">—</span></div>
-<div class="profile-data-row"><span class="profile-data-label">Full Name</span><span class="profile-data-value" id="profilePageFullName">—</span></div>
-<div class="profile-data-row"><span class="profile-data-label">Country</span><span class="profile-data-value" id="profilePageCountry">—</span></div>
-<div class="profile-data-row"><span class="profile-data-label">State / Province</span><span class="profile-data-value" id="profilePageState">—</span></div>
-</div>
-<p class="profile-save-status" id="profileSaveStatus"></p>
-</div>
-</section>
+<div class="creator-overlay" id="creatorOverlay"><div class="creator-modal" role="dialog" aria-modal="true"><button class="creator-close" id="creatorClose" aria-label="Close">×</button><div class="creator-top"><div class="creator-title">Create your channel</div><div class="creator-subtitle">One step at a time. Complete the setup to become a MATRIX creator.</div><div class="creator-progress-head"><span class="creator-step-count" id="creatorStepCount">1/4</span></div><div class="boss-track"><div class="boss-fill" id="bossFill"></div></div></div><div class="creator-body"><section class="creator-step active" data-step="1"><h3>Upload your channel logo</h3><p>Choose the logo people will see on your channel. You can also set the channel name and handle here.</p><div class="creator-logo-area"><div class="creator-logo-preview"><img id="creatorLogoImage" src="" alt="Channel logo"><span class="creator-logo-fallback" id="creatorLogoFallback">+</span></div><input type="file" id="creatorLogoInput" class="hidden-file-input" accept="image/png,image/jpeg,image/webp"><button class="upload-button" id="uploadChannelLogo">Upload Logo</button></div><div class="row" style="margin-top:20px"><div class="input-group"><label for="channelName">Channel Name</label><input id="channelName" maxlength="50" placeholder="Your channel name"></div><div class="input-group"><label for="channelHandle">Handle</label><input id="channelHandle" maxlength="30" placeholder="@yourchannel"></div></div></section><section class="creator-step" data-step="2"><h3>What is your specialty?</h3><p>Tell MATRIX what your channel focuses on.</p><div class="input-group"><label for="channelSpecialty">Specialty</label><input id="channelSpecialty" maxlength="80" placeholder="Movies, gaming, comedy, education, technology..."></div></section><section class="creator-step" data-step="3"><h3>About your channel</h3><p>This is optional. Give viewers a short introduction.</p><textarea id="channelDescription" maxlength="500" placeholder="Tell people what your channel is about..."></textarea><p class="language-input-note" id="descriptionCount" style="color:var(--muted);font-size:11px;margin-top:8px">0 / 500</p></section><section class="creator-step" data-step="4"><h3>What languages do you create in?</h3><p>This is optional. Separate multiple languages with commas.</p><input id="channelLanguages" maxlength="200" placeholder="English, Hindi, Marathi"></section><div class="creator-status" id="creatorStatus"></div><div class="creator-actions"><button class="creator-action" id="creatorBack">Back</button><button class="creator-action primary" id="creatorNext">Next</button></div></div></div></div>
 
-<section class="page-section" id="page-channel">
-<div class="channel-header">
-<img class="channel-header-logo" id="channelHeaderLogo" src="" alt="Channel logo">
-<div><h2 id="channelHeaderName">My Channel</h2><p id="channelHeaderHandle">@channel</p></div>
-</div>
-<div class="content-row"><h3>Channel Content</h3><div class="empty-content">Your uploaded content will appear here.</div></div>
-</section>
-
-</main>
-</div>
-
-<!-- CREATOR SETUP -->
-<div class="creator-overlay" id="creatorOverlay">
-<div class="creator-modal" role="dialog" aria-modal="true" aria-labelledby="creatorTitle">
-<button class="creator-close" id="creatorClose" aria-label="Close">×</button>
-
-<div class="creator-top">
-<div class="creator-title" id="creatorTitle">Create your channel</div>
-<div class="creator-subtitle" id="creatorSubtitle">Set up your channel before becoming a MATRIX creator.</div>
-</div>
-
-<!-- INITIAL CHANNEL INFO: BEFORE THE 4 CREATOR QUESTIONS -->
-<div id="channelBasicsView" class="creator-body">
-<div class="input-group"><label for="channelName">Channel Name</label><input id="channelName" type="text" maxlength="50" placeholder="Choose your channel name"></div>
-<div class="input-group"><label for="channelHandle">Channel Handle</label><input id="channelHandle" type="text" maxlength="30" placeholder="@yourchannel"></div>
-<div class="error" id="channelBasicsError"></div>
-<div class="creator-actions"><button class="creator-action primary" id="startCreatorSetup">Continue →</button></div>
-</div>
-
-<!-- 4 STEP CREATOR SETUP -->
-<div id="creatorStepsView" style="display:none">
-<div class="creator-top" style="padding-top:0">
-<div class="creator-progress-head"><span class="creator-step-count" id="creatorStepCount">1/4</span></div>
-<div class="boss-track" aria-label="Creator setup progress"><div class="boss-fill" id="bossFill"></div></div>
-</div>
-
-<div class="creator-body">
-
-<section class="creator-step active" data-step="1">
-<h3>Upload your channel logo</h3>
-<p>Your channel logo is separate from your MATRIX profile picture.</p>
-<div class="creator-logo-area">
-<div class="creator-logo-preview"><img id="creatorLogoImage" src="" alt="Channel logo"><span class="creator-logo-fallback" id="creatorLogoFallback">+</span></div>
-<input type="file" id="creatorLogoInput" class="hidden-file-input" accept="image/png,image/jpeg,image/webp">
-<button class="upload-button" id="uploadChannelLogo">Upload Logo</button>
-</div>
-</section>
-
-<section class="creator-step" data-step="2">
-<h3>What is your specialty?</h3>
-<p>Tell MATRIX what kind of content your channel focuses on.</p>
-<div class="specialty-grid">
-<label class="specialty-option"><input type="radio" name="specialty" value="Movies"><span>Movies</span></label>
-<label class="specialty-option"><input type="radio" name="specialty" value="Gaming"><span>Gaming</span></label>
-<label class="specialty-option"><input type="radio" name="specialty" value="Comedy"><span>Comedy</span></label>
-<label class="specialty-option"><input type="radio" name="specialty" value="Education"><span>Education</span></label>
-<label class="specialty-option"><input type="radio" name="specialty" value="Technology"><span>Technology</span></label>
-<label class="specialty-option"><input type="radio" name="specialty" value="Music"><span>Music</span></label>
-<label class="specialty-option"><input type="radio" name="specialty" value="Vlogs"><span>Vlogs</span></label>
-<label class="specialty-option"><input type="radio" name="specialty" value="Other"><span>Other</span></label>
-</div>
-</section>
-
-<section class="creator-step" data-step="3">
-<h3>Describe your channel</h3>
-<p>Give viewers a short description of what they can expect from you.</p>
-<textarea id="channelDescription" maxlength="500" placeholder="Tell people what your channel is about..."></textarea>
-<p class="language-input-note" id="descriptionCount">0 / 500</p>
-</section>
-
-<section class="creator-step" data-step="4">
-<h3>What languages do you use?</h3>
-<p>Enter the languages your channel primarily uses. Separate multiple languages with commas.</p>
-<input id="channelLanguages" type="text" maxlength="200" placeholder="English, Hindi, Marathi">
-</section>
-
-<div class="creator-status" id="creatorStatus"></div>
-<div class="creator-actions">
-<button class="creator-action" id="creatorBack">← Back</button>
-<button class="creator-action primary" id="creatorNext">Next →</button>
-</div>
-</div>
-</div>
-
-</div>
-</div>
+<div class="modal-small" id="donateModal"><div class="modal-small-card"><h3>Donate to MATRIX</h3><p>Donations support MATRIX / QUADRA. Payment processing is not connected yet, so no money will be charged from this button.</p><div class="modal-small-actions"><button class="outline-button" id="closeDonate">Close</button></div></div></div>
+<div class="modal-small" id="uploadModal"><div class="modal-small-card"><h3>Submit a video</h3><p>Your upload starts as pending and must be reviewed by the MATRIX owner before publication.</p><div class="input-group"><label for="videoTitle">Title</label><input id="videoTitle" maxlength="150" placeholder="Video title"></div><div class="input-group"><label for="videoDescription">Description</label><textarea id="videoDescription" maxlength="2000" placeholder="Describe your video"></textarea></div><div class="input-group"><label for="videoUrl">Video URL</label><input id="videoUrl" placeholder="https://..."></div><div class="input-group"><label for="thumbnailUrl">Thumbnail URL (optional)</label><input id="thumbnailUrl" placeholder="https://..."></div><p class="status" id="uploadStatus"></p><div class="modal-small-actions"><button class="outline-button" id="closeUpload">Cancel</button><button class="primary" id="submitVideo">Submit for Review</button></div></div></div>
 
 <script>
 const SUPABASE_URL="https://fdoxfsvemgjdafyawkkz.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_sTi8TJQf_M9idpGh05Rrsw_cvnKs8-7";
 const {createClient}=window.supabase;
 const supabaseClient=createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-
-const authPage=document.getElementById("authPage");
-const app=document.getElementById("app");
-const signInScreen=document.getElementById("signInScreen");
-const idScreen=document.getElementById("idScreen");
-const usernameScreen=document.getElementById("usernameScreen");
-const detailsScreen=document.getElementById("detailsScreen");
-
-function showScreen(screen){
-[signInScreen,idScreen,usernameScreen,detailsScreen].forEach(x=>x.classList.remove("active"));
-screen.classList.add("active");window.scrollTo(0,0);
-}
-
-let accountData={matrixId:"",username:""};
-let currentProfile=null;
-let currentChannel=null;
-
-function showError(id,message){const e=document.getElementById(id);e.textContent=message;e.style.display="block"}
-function hideError(id){const e=document.getElementById(id);e.style.display="none"}
-
-function updateProfileImages(profile){
-const imageUrl=profile.avatar_url||"";
-const topImage=document.getElementById("profileImage");
-const topFallback=document.getElementById("profileFallback");
-const pageImage=document.getElementById("profilePageImage");
-const pageFallback=document.getElementById("profilePageFallback");
-const letter=(profile.username||profile.full_name||"U").trim().charAt(0).toUpperCase()||"U";
-if(imageUrl){topImage.src=imageUrl;topImage.style.display="block";topFallback.style.display="none";pageImage.src=imageUrl;pageImage.style.display="block";pageFallback.style.display="none"}
-else{topImage.style.display="none";topFallback.style.display="flex";topFallback.textContent=letter;pageImage.style.display="none";pageFallback.style.display="flex";pageFallback.textContent=letter}
-}
-
-function showApp(profile,channel){
-currentProfile=profile;currentChannel=channel;authPage.style.display="none";app.classList.add("active");setupProfile(profile);setupChannel(channel);showPage("home");
-}
-
-function setupProfile(profile){
-document.getElementById("profileName").textContent=profile.username||"User";
-document.getElementById("profileMatrixId").textContent=profile.matrix_id||"@user";
-document.getElementById("profilePageUsername").textContent=profile.username||"—";
-document.getElementById("profilePageMatrixId").textContent=profile.matrix_id||"—";
-document.getElementById("profilePageFullName").textContent=profile.full_name||"—";
-document.getElementById("profilePageCountry").textContent=profile.country||"—";
-document.getElementById("profilePageState").textContent=profile.state||"—";
-updateProfileImages(profile);
-}
-
-function createAvatar(name){
-const letter=(name||"?").charAt(0).toUpperCase();
-const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#202020"/><text x="50" y="65" text-anchor="middle" font-size="45" fill="white" font-family="Arial">${letter}</text></svg>`;
-return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg);
-}
-
-function setupChannel(channel){
-const button=document.getElementById("myChannelButton");
-if(!channel){button.classList.remove("visible");return}
-button.classList.add("visible");
-const mini=document.getElementById("channelMiniLogo");
-const header=document.getElementById("channelHeaderLogo");
-const logo=channel.logo_url||createAvatar(channel.channel_name);
-mini.src=logo;header.src=logo;
-document.getElementById("channelHeaderName").textContent=channel.channel_name;
-document.getElementById("channelHeaderHandle").textContent=channel.handle;
-}
-
-async function checkProfile(userId){
-const {data:profile,error}=await supabaseClient.from("profiles").select("*").eq("id",userId).maybeSingle();
-if(error){console.error(error);showScreen(idScreen);return}
-if(!profile){showScreen(idScreen);return}
-if(!profile.avatar_url){
-const {data:s}=await supabaseClient.auth.getSession();
-if(s.session?.user)profile.avatar_url=s.session.user.user_metadata?.avatar_url||s.session.user.user_metadata?.picture||"";
-}
-const {data:channel}=await supabaseClient.from("channels").select("*").eq("user_id",userId).maybeSingle();
-showApp(profile,channel);
-}
-
-let authBooting=true;
+const authPage=document.getElementById("authPage"),app=document.getElementById("app"),signInScreen=document.getElementById("signInScreen"),idScreen=document.getElementById("idScreen"),usernameScreen=document.getElementById("usernameScreen"),detailsScreen=document.getElementById("detailsScreen");
+let accountData={matrixId:"",username:""},currentProfile=null,currentChannel=null,authBooting=true;
+function showScreen(screen){[signInScreen,idScreen,usernameScreen,detailsScreen].forEach(x=>x.classList.remove("active"));screen.classList.add("active");window.scrollTo(0,0)}
+function showError(id,message){const e=document.getElementById(id);e.textContent=message;e.style.display="block"}function hideError(id){const e=document.getElementById(id);e.style.display="none"}
+function roleName(role){return role?role.charAt(0).toUpperCase()+role.slice(1):"Member"}
+function createAvatar(name){const letter=(name||"?").trim().charAt(0).toUpperCase()||"?";const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="#202020"/><text x="50" y="65" text-anchor="middle" font-size="45" fill="white" font-family="Arial">${letter}</text></svg>`;return "data:image/svg+xml;charset=UTF-8,"+encodeURIComponent(svg)}
+function updateProfileImages(profile){const imageUrl=profile.avatar_url||"",top=document.getElementById("profileImage"),fallback=document.getElementById("profileFallback"),page=document.getElementById("profilePageImage"),pageFallback=document.getElementById("profilePageFallback"),letter=(profile.username||profile.full_name||"U").trim().charAt(0).toUpperCase()||"U";if(imageUrl){top.src=imageUrl;top.style.display="block";fallback.style.display="none";page.src=imageUrl;page.style.display="block";pageFallback.style.display="none"}else{top.style.display="none";fallback.style.display="flex";fallback.textContent=letter;page.style.display="none";pageFallback.style.display="flex";pageFallback.textContent=letter}}
+function applyTheme(theme){const t=theme==="light"?"light":"dark";document.body.classList.toggle("light",t==="light");document.getElementById("darkTheme").classList.toggle("active",t==="dark");document.getElementById("lightTheme").classList.toggle("active",t==="light");localStorage.setItem("matrix-theme",t)}
+async function saveTheme(theme){applyTheme(theme);if(!currentProfile)return;const {error}=await supabaseClient.from("profiles").update({theme}).eq("id",currentProfile.id);document.getElementById("themeStatus").textContent=error?"Could not save theme.":"Theme saved.";if(!error)currentProfile.theme=theme}
+function setupProfile(profile){document.getElementById("profileName").textContent=profile.username||"User";document.getElementById("profileMatrixId").textContent=profile.matrix_id||"@user";document.getElementById("profilePageUsername").textContent=profile.username||"—";document.getElementById("profilePageMatrixId").textContent=profile.matrix_id||"—";document.getElementById("profilePageFullName").textContent=profile.full_name||"—";document.getElementById("profilePageCountry").textContent=profile.country||"—";document.getElementById("profilePageState").textContent=profile.state||"—";document.getElementById("profilePageRole").textContent=roleName(profile.role);updateProfileImages(profile);applyTheme(profile.theme||localStorage.getItem("matrix-theme")||"dark");document.getElementById("ownerReviewButton").classList.toggle("hidden",profile.role!=="owner")}
+function setupChannel(channel){currentChannel=channel;const createBtn=document.getElementById("createChannelButton"),myBtn=document.getElementById("myChannelButton");if(!channel){createBtn.classList.remove("hidden");myBtn.classList.remove("visible");return}createBtn.classList.add("hidden");myBtn.classList.add("visible");const logo=channel.logo_url||createAvatar(channel.channel_name);document.getElementById("channelMiniLogo").src=logo;document.getElementById("channelHeaderLogo").src=logo;document.getElementById("channelHeaderName").textContent=channel.channel_name;document.getElementById("channelHeaderHandle").textContent=channel.handle.startsWith("@")?channel.handle:"@"+channel.handle;document.getElementById("channelHeaderSpecialty").textContent=channel.specialty?"Specialty: "+channel.specialty:"";document.getElementById("channelAbout").textContent=channel.description||"No channel description yet.";document.getElementById("channelLanguages").textContent=channel.languages?"Languages: "+channel.languages:"";}
+function showApp(profile,channel){currentProfile=profile;setupProfile(profile);setupChannel(channel);authPage.style.display="none";app.classList.add("active");showPage("home");loadPublishedVideos();if(channel)loadMyVideos();}
+async function checkProfile(userId){const {data:profile,error}=await supabaseClient.from("profiles").select("*").eq("id",userId).maybeSingle();if(error){console.error(error);showScreen(idScreen);authPage.style.display="flex";return}if(!profile){authPage.style.display="flex";showScreen(idScreen);return}const {data:s}=await supabaseClient.auth.getSession();if(!profile.avatar_url&&s.session?.user)profile.avatar_url=s.session.user.user_metadata?.avatar_url||s.session.user.user_metadata?.picture||"";const {data:channel}=await supabaseClient.from("channels").select("*").eq("user_id",userId).maybeSingle();showApp(profile,channel)}
 function showSignIn(){authBooting=false;app.classList.remove("active");authPage.style.display="flex";showScreen(signInScreen)}
-async function checkSession(){
-authBooting=true;authPage.style.display="none";app.classList.remove("active");
-const {data,error}=await supabaseClient.auth.getSession();
-if(error){console.error(error);showSignIn();return}
-if(!data.session){showSignIn();return}
-await checkProfile(data.session.user.id);authBooting=false;
-}
-document.getElementById("googleButton").addEventListener("click",async function(){
-const button=this;button.disabled=true;document.getElementById("loginStatus").textContent="Checking your session...";
-try{const {data}=await supabaseClient.auth.getSession();
-if(data.session){document.getElementById("loginStatus").textContent="";await checkProfile(data.session.user.id);return}
-document.getElementById("loginStatus").textContent="Connecting to Google...";
-const {error}=await supabaseClient.auth.signInWithOAuth({provider:"google",options:{redirectTo:"https://lordcryso.github.io/MATRIX/"}});if(error)throw error;
-}catch(error){console.error(error);button.disabled=false;document.getElementById("loginStatus").textContent=error.message||"Could not sign in."}
-});
+async function checkSession(){authBooting=true;authPage.style.display="none";app.classList.remove("active");const {data,error}=await supabaseClient.auth.getSession();if(error||!data.session){showSignIn();return}await checkProfile(data.session.user.id);authBooting=false}
 
-document.getElementById("idContinue").addEventListener("click",async function(){
-let value=document.getElementById("matrixId").value.trim();if(value.startsWith("@"))value=value.substring(1);
-if(!/^[a-zA-Z0-9_]{3,20}$/.test(value)){showError("idError","MATRIX ID must contain 3–20 letters, numbers, or underscores.");return}
-hideError("idError");const finalMatrixId="@"+value;
-const {data,error}=await supabaseClient.from("profiles").select("id").eq("matrix_id",finalMatrixId).maybeSingle();
-if(error){console.error(error);showError("idError","Could not check MATRIX ID. Please try again.");return}
-if(data){showError("idError","MATRIX ID already taken.");return}
-accountData.matrixId=finalMatrixId;document.getElementById("matrixId").value=finalMatrixId;showScreen(usernameScreen);
-});
+document.getElementById("googleButton").addEventListener("click",async function(){const button=this;button.disabled=true;document.getElementById("loginStatus").textContent="Checking your session...";try{const {data}=await supabaseClient.auth.getSession();if(data.session){await checkProfile(data.session.user.id);return}document.getElementById("loginStatus").textContent="Connecting to Google...";const {error}=await supabaseClient.auth.signInWithOAuth({provider:"google",options:{redirectTo:"https://lordcryso.github.io/MATRIX/"}});if(error)throw error}catch(error){console.error(error);button.disabled=false;document.getElementById("loginStatus").textContent=error.message||"Could not sign in."}});
+document.getElementById("idContinue").addEventListener("click",async function(){let value=document.getElementById("matrixId").value.trim();if(value.startsWith("@"))value=value.slice(1);if(!/^[a-zA-Z0-9_]{3,20}$/.test(value)){showError("idError","MATRIX ID must contain 3–20 letters, numbers, or underscores.");return}hideError("idError");const finalId="@"+value;const {data,error}=await supabaseClient.from("profiles").select("id").eq("matrix_id",finalId).maybeSingle();if(error){showError("idError","Could not check MATRIX ID. Please try again.");return}if(data){showError("idError","MATRIX ID already taken.");return}accountData.matrixId=finalId;document.getElementById("matrixId").value=finalId;showScreen(usernameScreen)});
+document.getElementById("usernameContinue").addEventListener("click",async function(){const username=document.getElementById("username").value.trim();if(username.length<2||username.length>30){showError("usernameError","Username must be between 2 and 30 characters.");return}hideError("usernameError");this.disabled=true;this.textContent="Checking...";const {data,error}=await supabaseClient.from("profiles").select("id").eq("username",username).maybeSingle();if(error){showError("usernameError","Could not check username. Please try again.");this.disabled=false;this.textContent="Continue";return}if(data){showError("usernameError","That username is already taken.");this.disabled=false;this.textContent="Continue";return}accountData.username=username;this.disabled=false;this.textContent="Continue";showScreen(detailsScreen)});
+document.getElementById("createAccount").addEventListener("click",async function(){hideError("detailsError");const fullName=document.getElementById("fullName").value.trim(),country=document.getElementById("country").value,state=document.getElementById("state").value.trim(),age=Number(document.getElementById("age").value),gender=document.getElementById("gender").value;if(!fullName||!country||!state||!age||age<13||age>120||!gender){showError("detailsError","Please complete all required information.");return}this.disabled=true;this.textContent="Creating Account...";const {data:sessionData}=await supabaseClient.auth.getSession();if(!sessionData.session){showError("detailsError","Your Google session has expired. Please sign in again.");this.disabled=false;this.textContent="Create MATRIX Account";showScreen(signInScreen);return}const user=sessionData.session.user,googleAvatar=user.user_metadata?.avatar_url||user.user_metadata?.picture||"";const {error}=await supabaseClient.from("profiles").insert({id:user.id,matrix_id:accountData.matrixId,username:accountData.username,full_name:fullName,country,state,age,gender,avatar_url:googleAvatar,role:"member",theme:"dark"});if(error){showError("detailsError",error.code==="23505"?"That MATRIX ID or username is already taken.":error.message);this.disabled=false;this.textContent="Create MATRIX Account";return}const {data:newProfile}=await supabaseClient.from("profiles").select("*").eq("id",user.id).single();showApp(newProfile,null);this.disabled=false;this.textContent="Create MATRIX Account"});
 
-document.getElementById("usernameContinue").addEventListener("click",async function(){
-const username=document.getElementById("username").value.trim();
-if(username.length<2||username.length>30){showError("usernameError","Username must be between 2 and 30 characters.");return}
-hideError("usernameError");this.disabled=true;this.textContent="Checking...";
-const {data,error}=await supabaseClient.from("profiles").select("id").eq("username",username).maybeSingle();
-if(error){console.error(error);showError("usernameError","Could not check username. Please try again.");this.disabled=false;this.textContent="Continue";return}
-if(data){showError("usernameError","That username is already taken.");this.disabled=false;this.textContent="Continue";return}
-accountData.username=username;this.disabled=false;this.textContent="Continue";showScreen(detailsScreen);
-});
+function showPage(pageName){document.querySelectorAll(".page-section").forEach(s=>s.classList.remove("active"));const target=document.getElementById("page-"+pageName);if(!target)return;target.classList.add("active");document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===pageName));document.getElementById("profileMenu").classList.remove("active");window.scrollTo(0,0);if(pageName==="videos")loadPublishedVideos();if(pageName==="channel")loadMyVideos();if(pageName==="owner-review")loadOwnerReview()}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));document.getElementById("matrixBrand").addEventListener("click",()=>showPage("home"));document.getElementById("browseMovies").addEventListener("click",()=>showPage("movies"));document.getElementById("profileButton").addEventListener("click",e=>{e.stopPropagation();document.getElementById("profileMenu").classList.toggle("active")});document.getElementById("profilePageButton").addEventListener("click",()=>showPage("profile"));document.getElementById("ownerReviewButton").addEventListener("click",()=>showPage("owner-review"));document.addEventListener("click",e=>{const m=document.getElementById("profileMenu"),b=document.getElementById("profileButton");if(!m.contains(e.target)&&!b.contains(e.target))m.classList.remove("active")});
 
-document.getElementById("createAccount").addEventListener("click",async function(){
-hideError("detailsError");
-const fullName=document.getElementById("fullName").value.trim();
-const country=document.getElementById("country").value;
-const state=document.getElementById("state").value.trim();
-const age=Number(document.getElementById("age").value);
-const gender=document.getElementById("gender").value;
-if(!fullName||!country||!state||!age||age<13||age>120||!gender){showError("detailsError","Please complete all required information.");return}
-this.disabled=true;this.textContent="Creating Account...";
-const {data:sessionData}=await supabaseClient.auth.getSession();
-if(!sessionData.session){showError("detailsError","Your Google session has expired. Please sign in again.");this.disabled=false;this.textContent="Create MATRIX Account";showScreen(signInScreen);return}
-const user=sessionData.session.user;
-const googleAvatar=user.user_metadata?.avatar_url||user.user_metadata?.picture||"";
-const {error}=await supabaseClient.from("profiles").insert({id:user.id,matrix_id:accountData.matrixId,username:accountData.username,full_name:fullName,country,state,age,gender,avatar_url:googleAvatar});
-if(error){console.error(error);showError("detailsError",error.code==="23505"?"That MATRIX ID or username is already taken.":error.message);this.disabled=false;this.textContent="Create MATRIX Account";return}
-const {data:newProfile}=await supabaseClient.from("profiles").select("*").eq("id",user.id).single();
-newProfile.avatar_url=googleAvatar;showApp(newProfile,null);
-});
+document.getElementById("darkTheme").addEventListener("click",()=>saveTheme("dark"));document.getElementById("lightTheme").addEventListener("click",()=>saveTheme("light"));document.getElementById("donateButton").addEventListener("click",()=>document.getElementById("donateModal").classList.add("active"));document.getElementById("closeDonate").addEventListener("click",()=>document.getElementById("donateModal").classList.remove("active"));
 
-function showPage(pageName){
-document.querySelectorAll(".page-section").forEach(s=>s.classList.remove("active"));
-const target=document.getElementById("page-"+pageName);if(!target)return;
-target.classList.add("active");
-document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===pageName));
-document.getElementById("profileMenu").classList.remove("active");window.scrollTo(0,0);
-}
-document.querySelectorAll("[data-page]").forEach(button=>button.addEventListener("click",()=>showPage(button.dataset.page)));
-document.getElementById("matrixBrand").addEventListener("click",()=>showPage("home"));
-document.getElementById("browseMovies").addEventListener("click",()=>showPage("movies"));
-
-document.getElementById("profileButton").addEventListener("click",e=>{e.stopPropagation();document.getElementById("profileMenu").classList.toggle("active")});
-document.getElementById("profilePageButton").addEventListener("click",()=>showPage("profile"));
-document.addEventListener("click",e=>{const menu=document.getElementById("profileMenu"),button=document.getElementById("profileButton");if(!menu.contains(e.target)&&!button.contains(e.target))menu.classList.remove("active")});
-
-document.getElementById("editProfilePicture").addEventListener("click",()=>document.getElementById("profileFileInput").click());
-
-function resizeImage(file){
-return new Promise((resolve,reject)=>{
-const reader=new FileReader();
-reader.onload=e=>{const image=new Image();image.onload=()=>{
-const max=512;let w=image.width,h=image.height;
-if(w>max||h>max){if(w>h){h=Math.round(h*max/w);w=max}else{w=Math.round(w*max/h);h=max}}
-const canvas=document.createElement("canvas");canvas.width=w;canvas.height=h;canvas.getContext("2d").drawImage(image,0,0,w,h);
-resolve(canvas.toDataURL("image/jpeg",.82));
-};image.onerror=reject;image.src=e.target.result};reader.onerror=reject;reader.readAsDataURL(file);
-});
-}
-
-document.getElementById("profileFileInput").addEventListener("change",async function(){
-const file=this.files[0];if(!file)return;const status=document.getElementById("profileSaveStatus");
-if(!file.type.startsWith("image/")){status.textContent="Please choose an image file.";this.value="";return}
-if(file.size>10*1024*1024){status.textContent="Image must be smaller than 10 MB.";this.value="";return}
-status.textContent="Preparing profile picture...";
-try{const imageData=await resizeImage(file);status.textContent="Saving profile picture...";
-if(!currentProfile){status.textContent="Profile is not loaded.";return}
-const {error}=await supabaseClient.from("profiles").update({avatar_url:imageData}).eq("id",currentProfile.id);
-if(error){console.error(error);status.textContent="Could not save profile picture.";return}
-currentProfile.avatar_url=imageData;updateProfileImages(currentProfile);status.textContent="Profile picture updated."
-}catch(e){console.error(e);status.textContent="Could not process that image."}this.value="";
-});
+document.getElementById("editProfilePicture").addEventListener("click",()=>document.getElementById("profileFileInput").click());function resizeImage(file){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=e=>{const im=new Image();im.onload=()=>{const max=512;let w=im.width,h=im.height;if(w>max||h>max){if(w>h){h=Math.round(h*max/w);w=max}else{w=Math.round(w*max/h);h=max}}const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);resolve(c.toDataURL("image/jpeg",.82))};im.onerror=reject;im.src=e.target.result};r.onerror=reject;r.readAsDataURL(file)})}
+document.getElementById("profileFileInput").addEventListener("change",async function(){const file=this.files[0],status=document.getElementById("profileSaveStatus");if(!file)return;if(!file.type.startsWith("image/")){status.textContent="Please choose an image file.";return}status.textContent="Saving profile picture...";try{const imageData=await resizeImage(file);const {error}=await supabaseClient.from("profiles").update({avatar_url:imageData}).eq("id",currentProfile.id);if(error)throw error;currentProfile.avatar_url=imageData;updateProfileImages(currentProfile);status.textContent="Profile picture updated."}catch(e){console.error(e);status.textContent="Could not save profile picture."}this.value=""});
 
 /* CREATOR SETUP */
-const creatorOverlay=document.getElementById("creatorOverlay");
-const channelBasicsView=document.getElementById("channelBasicsView");
-const creatorStepsView=document.getElementById("creatorStepsView");
-const creatorStepCount=document.getElementById("creatorStepCount");
-const bossFill=document.getElementById("bossFill");
-const creatorStatus=document.getElementById("creatorStatus");
-const creatorSteps=[...document.querySelectorAll(".creator-step")];
-let creatorStep=1;
-let creatorLogoData="";
-let creatorChannelData={channelName:"",handle:"",specialty:"",description:"",languages:""};
+const creatorOverlay=document.getElementById("creatorOverlay"),creatorSteps=[...document.querySelectorAll(".creator-step")],creatorStepCount=document.getElementById("creatorStepCount"),bossFill=document.getElementById("bossFill"),creatorStatus=document.getElementById("creatorStatus");let creatorStep=1,creatorLogoData="";
+function creatorMessage(msg,error=false){creatorStatus.textContent=msg;creatorStatus.classList.toggle("error",error)}function resetCreator(){creatorStep=1;creatorLogoData="";["channelName","channelHandle","channelSpecialty","channelDescription","channelLanguages"].forEach(id=>document.getElementById(id).value="");document.getElementById("creatorLogoImage").style.display="none";document.getElementById("creatorLogoFallback").style.display="block";document.getElementById("creatorLogoFallback").textContent="+";document.getElementById("descriptionCount").textContent="0 / 500";creatorMessage("");updateCreatorStep()}
+function updateCreatorStep(){creatorSteps.forEach(s=>s.classList.toggle("active",Number(s.dataset.step)===creatorStep));creatorStepCount.textContent=creatorStep+"/4";bossFill.style.width=((creatorStep-1)*25)+"%";document.getElementById("creatorBack").style.display=creatorStep===1?"none":"inline-block";document.getElementById("creatorNext").textContent=creatorStep===4?"Create Channel":"Next"}
+function openCreator(){if(currentChannel){showPage("channel");return}resetCreator();creatorOverlay.classList.add("active")}function closeCreator(){creatorOverlay.classList.remove("active")}
+document.getElementById("createChannelButton").addEventListener("click",()=>{document.getElementById("profileMenu").classList.remove("active");openCreator()});document.getElementById("creatorClose").addEventListener("click",closeCreator);creatorOverlay.addEventListener("click",e=>{if(e.target===creatorOverlay)closeCreator()});document.getElementById("uploadChannelLogo").addEventListener("click",()=>document.getElementById("creatorLogoInput").click());document.getElementById("creatorLogoInput").addEventListener("change",async function(){const file=this.files[0];if(!file)return;if(!file.type.startsWith("image/")){creatorMessage("Please choose an image file.",true);return}try{creatorLogoData=await resizeImage(file);const im=document.getElementById("creatorLogoImage");im.src=creatorLogoData;im.style.display="block";document.getElementById("creatorLogoFallback").style.display="none";creatorMessage("Logo ready.")}catch(e){creatorMessage("Could not process that logo.",true)}this.value=""});document.getElementById("channelDescription").addEventListener("input",function(){document.getElementById("descriptionCount").textContent=this.value.length+" / 500"});
+document.getElementById("creatorBack").addEventListener("click",()=>{if(creatorStep>1){creatorStep--;updateCreatorStep()}else{creatorMessage("")}});
+async function createChannel(){const name=document.getElementById("channelName").value.trim(),handleRaw=document.getElementById("channelHandle").value.trim(),specialty=document.getElementById("channelSpecialty").value.trim(),description=document.getElementById("channelDescription").value.trim(),languages=document.getElementById("channelLanguages").value.trim();if(!creatorLogoData){creatorMessage("Please upload your channel logo.",true);return}if(!name){creatorMessage("Please enter a channel name.",true);return}let handle=handleRaw.startsWith("@")?handleRaw:"@"+handleRaw;if(!/^@[a-zA-Z0-9_]{3,30}$/.test(handle)){creatorMessage("Handle must contain 3–30 letters, numbers, or underscores.",true);return}if(!specialty){creatorMessage("Please enter your specialty.",true);return}creatorMessage("Checking channel availability...");const {data:nm,error:ne}=await supabaseClient.from("channels").select("id").ilike("channel_name",name).maybeSingle();if(ne){creatorMessage("Could not check channel name.",true);return}if(nm){creatorMessage("That channel name is already taken.",true);return}const {data:hm,error:he}=await supabaseClient.from("channels").select("id").eq("handle",handle.replace(/^@/,"")).maybeSingle();if(he){creatorMessage("Could not check channel handle.",true);return}if(hm){creatorMessage("That channel handle is already taken.",true);return}creatorMessage("Creating your channel...");document.getElementById("creatorNext").disabled=true;const {data:sessionData}=await supabaseClient.auth.getSession();if(!sessionData.session){creatorMessage("Your session has expired.",true);document.getElementById("creatorNext").disabled=false;return}const {data,error}=await supabaseClient.from("channels").insert({user_id:sessionData.session.user.id,channel_name:name,handle:handle.replace(/^@/,""),logo_url:creatorLogoData,specialty,description,languages}).select().single();if(error){creatorMessage(error.code==="23505"?"That channel name or handle is already taken.":error.message,true);document.getElementById("creatorNext").disabled=false;return}currentChannel=data;if(currentProfile.role!=="owner")currentProfile.role="creator";setupProfile(currentProfile);setupChannel(data);bossFill.style.width="100%";creatorMessage("Channel created.");setTimeout(()=>{closeCreator();document.getElementById("creatorNext").disabled=false;showPage("channel")},500)}
+document.getElementById("creatorNext").addEventListener("click",()=>{if(creatorStep<4){if(creatorStep===1&&!creatorLogoData){creatorMessage("Please upload your channel logo.",true);return}if(creatorStep===1&&!document.getElementById("channelName").value.trim()){creatorMessage("Please enter a channel name.",true);return}if(creatorStep===1&&!document.getElementById("channelHandle").value.trim()){creatorMessage("Please enter a channel handle.",true);return}if(creatorStep===2&&!document.getElementById("channelSpecialty").value.trim()){creatorMessage("Please enter your specialty.",true);return}creatorStep++;updateCreatorStep();return}createChannel()});
 
-function resetCreatorSetup(){
-creatorStep=1;creatorLogoData="";creatorChannelData={channelName:"",handle:"",specialty:"",description:"",languages:""};
-document.getElementById("channelName").value="";
-document.getElementById("channelHandle").value="";
-document.getElementById("channelDescription").value="";
-document.getElementById("channelLanguages").value="";
-document.querySelectorAll('input[name="specialty"]').forEach(x=>x.checked=false);
-document.getElementById("creatorLogoImage").style.display="none";
-document.getElementById("creatorLogoImage").src="";
-document.getElementById("creatorLogoFallback").style.display="block";
-document.getElementById("creatorLogoFallback").textContent="+";
-creatorStatus.textContent="";creatorStatus.classList.remove("error");
-channelBasicsView.style.display="block";creatorStepsView.style.display="none";updateCreatorStep();
-}
+/* VIDEO FEED */
+async function loadPublishedVideos(){const grid=document.getElementById("videoGrid"),empty=document.getElementById("videoEmpty");if(!grid)return;grid.innerHTML="";empty.classList.add("hidden");const {data:videos,error}=await supabaseClient.from("videos").select("*, channels(id,channel_name,handle,logo_url,user_id), profiles(username,avatar_url)").eq("status","published").order("created_at",{ascending:false});if(error){console.error(error);empty.textContent="Could not load videos.";empty.classList.remove("hidden");return}if(!videos?.length){empty.textContent="No videos available yet.";empty.classList.remove("hidden");return}const ids=videos.map(v=>v.id);let likes=[],mine=[];if(ids.length){const {data:l}=await supabaseClient.from("video_likes").select("video_id,user_id").in("video_id",ids);likes=l||[];mine=likes.filter(x=>x.user_id===currentProfile?.id)}videos.forEach(v=>grid.appendChild(videoCard(v,likes.filter(x=>x.video_id===v.id).length,mine.some(x=>x.video_id===v.id))));}
+function videoCard(v,likeCount,liked){const d=document.createElement("div");d.className="video-card";const thumb=v.thumbnail_url?`<img src="${escapeAttr(v.thumbnail_url)}" alt="">`:'<span>No thumbnail</span>';const channel=v.channels?.channel_name||"Creator";d.innerHTML=`<div class="video-thumb">${thumb}</div><div class="video-card-body"><div class="video-card-title">${escapeHtml(v.title)}</div><div class="video-card-desc">${escapeHtml(v.description||"")}</div><div class="video-card-meta">${escapeHtml(channel)}</div><div class="video-actions"><button class="video-action like-btn ${liked?"active":""}" data-id="${v.id}"><svg class="ui-icon" viewBox="0 0 24 24"><path d="M7 10v10H4V10h3z"></path><path d="M7 20h10.2a2 2 0 0 0 1.9-1.4l1.5-4.8A2 2 0 0 0 18.7 11H14l.7-4.2A2.2 2.2 0 0 0 12.5 4L7 10"></path></svg>Like <span>${likeCount}</span></button><button class="video-action share-btn" data-id="${v.id}">Share</button><button class="video-action connect-btn">Connect</button><button class="video-action comment-btn" data-id="${v.id}">Comments</button></div><div class="video-comments" id="comments-${v.id}"><div class="comment-list" id="comment-list-${v.id}"></div><div class="comment-form"><input id="comment-input-${v.id}" maxlength="2000" placeholder="Write a comment"><button data-id="${v.id}" class="send-comment">Send</button></div></div></div>`;d.querySelector(".like-btn").addEventListener("click",()=>toggleLike(v.id,d.querySelector(".like-btn")));d.querySelector(".share-btn").addEventListener("click",()=>shareVideo(v.id));const connectBtn=d.querySelector(".connect-btn");if(v.channels?.user_id===currentProfile?.id){connectBtn.style.display="none"}else{initConnectButton(v.channels?.id,connectBtn);connectBtn.addEventListener("click",()=>toggleConnect(v.channels?.id,connectBtn))}d.querySelector(".comment-btn").addEventListener("click",()=>{const box=d.querySelector(".video-comments");box.classList.toggle("open");if(box.classList.contains("open"))loadComments(v.id)});d.querySelector(".send-comment").addEventListener("click",()=>addComment(v.id));return d}
+async function initConnectButton(channelId,button){if(!channelId||!button)return;const {data}=await supabaseClient.from("channel_connections").select("id").eq("channel_id",channelId).eq("user_id",currentProfile.id).maybeSingle();button.classList.toggle("active",!!data);button.textContent=data?"Connected":"Connect"}
+async function toggleConnect(channelId,button){if(!channelId)return;const {data}=await supabaseClient.from("channel_connections").select("id").eq("channel_id",channelId).eq("user_id",currentProfile.id).maybeSingle();if(data){await supabaseClient.from("channel_connections").delete().eq("id",data.id);button.classList.remove("active");button.textContent="Connect"}else{const {error}=await supabaseClient.from("channel_connections").insert({channel_id:channelId,user_id:currentProfile.id});if(!error){button.classList.add("active");button.textContent="Connected"}}}
+async function toggleLike(videoId,button){const {data:existing}=await supabaseClient.from("video_likes").select("id").eq("video_id",videoId).eq("user_id",currentProfile.id).maybeSingle();if(existing){await supabaseClient.from("video_likes").delete().eq("id",existing.id);button.classList.remove("active")}else{await supabaseClient.from("video_likes").insert({video_id:videoId,user_id:currentProfile.id});button.classList.add("active")}const {count}=await supabaseClient.from("video_likes").select("id",{count:"exact",head:true}).eq("video_id",videoId);button.querySelector("span").textContent=count||0}
+async function shareVideo(videoId){await supabaseClient.from("video_shares").insert({video_id:videoId,user_id:currentProfile.id});const url=location.origin+location.pathname+"?video="+encodeURIComponent(videoId);try{await navigator.clipboard.writeText(url);alert("MATRIX video link copied.")}catch(e){prompt("Copy this MATRIX video link:",url)}}
+async function loadComments(videoId){const box=document.getElementById("comment-list-"+videoId);if(!box)return;box.innerHTML="Loading...";const {data,error}=await supabaseClient.from("comments").select("*, profiles(username)").eq("video_id",videoId).order("created_at",{ascending:true});if(error){box.textContent="Could not load comments.";return}if(!data?.length){box.textContent="No comments yet.";return}box.innerHTML=data.map(c=>`<div class="comment"><strong>${escapeHtml(c.profiles?.username||"Member")}</strong><p>${escapeHtml(c.content)}</p></div>`).join("")}
+async function addComment(videoId){const input=document.getElementById("comment-input-"+videoId),content=input.value.trim();if(!content)return;const {error}=await supabaseClient.from("comments").insert({video_id:videoId,user_id:currentProfile.id,content});if(error){alert("Could not post comment.");return}input.value="";loadComments(videoId)}
 
-function openCreatorSetup(){resetCreatorSetup();creatorOverlay.classList.add("active")}
-function closeCreatorSetup(){creatorOverlay.classList.remove("active")}
+/* CREATOR VIDEO SUBMISSION */
+document.getElementById("openUploadVideo").addEventListener("click",()=>{if(!currentChannel)return;document.getElementById("uploadModal").classList.add("active")});document.getElementById("closeUpload").addEventListener("click",()=>document.getElementById("uploadModal").classList.remove("active"));document.getElementById("submitVideo").addEventListener("click",async()=>{const title=document.getElementById("videoTitle").value.trim(),description=document.getElementById("videoDescription").value.trim(),video_url=document.getElementById("videoUrl").value.trim(),thumbnail_url=document.getElementById("thumbnailUrl").value.trim(),status=document.getElementById("uploadStatus");if(!title||!video_url){status.textContent="Title and video URL are required.";return}status.textContent="Submitting...";const {error}=await supabaseClient.from("videos").insert({creator_id:currentProfile.id,channel_id:currentChannel.id,title,description,video_url,thumbnail_url,status:"pending"});if(error){status.textContent=error.message;return}status.textContent="Submitted for owner review.";["videoTitle","videoDescription","videoUrl","thumbnailUrl"].forEach(id=>document.getElementById(id).value="");setTimeout(()=>{document.getElementById("uploadModal").classList.remove("active");loadMyVideos()},600)});
+async function loadMyVideos(){if(!currentChannel)return;const box=document.getElementById("myVideoList");box.innerHTML="Loading...";const {data,error}=await supabaseClient.from("videos").select("*").eq("channel_id",currentChannel.id).order("created_at",{ascending:false});if(error){box.textContent="Could not load your videos.";return}if(!data?.length){box.innerHTML='<div class="empty-content">No uploaded videos yet.</div>';return}box.innerHTML=data.map(v=>`<div class="owner-video"><h4>${escapeHtml(v.title)}</h4><p>${escapeHtml(v.description||"")}<br>Status: ${escapeHtml(v.status)}</p></div>`).join("")}
 
-document.getElementById("createChannelButton").addEventListener("click",()=>{document.getElementById("profileMenu").classList.remove("active");if(currentChannel){showPage("channel");return}openCreatorSetup()});
-document.getElementById("creatorClose").addEventListener("click",closeCreatorSetup);
-creatorOverlay.addEventListener("click",e=>{if(e.target===creatorOverlay)closeCreatorSetup()});
+/* OWNER REVIEW */
+async function loadOwnerReview(){if(currentProfile?.role!=="owner")return;const box=document.getElementById("ownerReviewList");box.innerHTML="Loading...";const {data,error}=await supabaseClient.from("videos").select("*, channels(channel_name,handle), profiles(username)").eq("status","pending").order("created_at",{ascending:true});if(error){box.textContent="Could not load pending videos.";return}if(!data?.length){box.innerHTML='<div class="empty-content">No pending videos.</div>';return}box.innerHTML=data.map(v=>`<div class="owner-video"><h4>${escapeHtml(v.title)}</h4><p>Creator: ${escapeHtml(v.profiles?.username||"Unknown")}<br>Channel: ${escapeHtml(v.channels?.channel_name||"Unknown")}<br>${escapeHtml(v.description||"")}</p><div class="owner-video-actions"><button class="approve" data-review="publish" data-id="${v.id}">Approve</button><button class="reject" data-review="reject" data-id="${v.id}">Reject</button></div></div>`).join("");box.querySelectorAll("[data-review]").forEach(btn=>btn.addEventListener("click",()=>reviewVideo(btn.dataset.id,btn.dataset.review))) }
+async function reviewVideo(id,action){if(currentProfile?.role!=="owner")return;const status=action==="publish"?"published":"rejected";const {error}=await supabaseClient.from("videos").update({status}).eq("id",id);if(error){alert(error.message);return}loadOwnerReview();loadPublishedVideos()}
 
-function setCreatorStatus(message,isError=false){creatorStatus.textContent=message;creatorStatus.classList.toggle("error",isError)}
+/* SEARCH */
+document.getElementById("searchInput").addEventListener("input",async function(){const q=this.value.trim();const box=document.getElementById("searchResults");if(!q){box.innerHTML="";return}const [{data:videos},{data:channels}]=await Promise.all([supabaseClient.from("videos").select("id,title,description").eq("status","published").ilike("title",`%${q}%`).limit(10),supabaseClient.from("channels").select("id,channel_name,handle,specialty").or(`channel_name.ilike.%${q}%,handle.ilike.%${q}%`).limit(10)]);box.innerHTML=[...(videos||[]).map(v=>`<div class="search-item"><strong>${escapeHtml(v.title)}</strong><span>Video</span></div>`),...(channels||[]).map(c=>`<div class="search-item"><strong>${escapeHtml(c.channel_name)}</strong><span>@${escapeHtml(c.handle.replace(/^@/,""))} · ${escapeHtml(c.specialty||"Creator")}</span></div>`)].join("")||'<div class="empty-content">No results found.</div>'});
+function escapeHtml(value){return String(value??"").replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}function escapeAttr(value){return escapeHtml(value).replace(/`/g,"&#96;")}
 
-function updateCreatorStep(){
-creatorSteps.forEach(s=>s.classList.toggle("active",Number(s.dataset.step)===creatorStep));
-creatorStepCount.textContent=creatorStep+"/4";
-bossFill.style.width=((creatorStep-1)*25)+"%";
-document.getElementById("creatorBack").style.display=creatorStep===1?"none":"inline-block";
-document.getElementById("creatorNext").textContent=creatorStep===4?"Create Channel":"Next →";
-setCreatorStatus("");
-}
-
-document.getElementById("startCreatorSetup").addEventListener("click",async()=>{
-hideError("channelBasicsError");
-let name=document.getElementById("channelName").value.trim();
-let handle=document.getElementById("channelHandle").value.trim().toLowerCase();
-if(!name){showError("channelBasicsError","Please enter a channel name.");return}
-if(!handle){showError("channelBasicsError","Please enter a channel handle.");return}
-if(!handle.startsWith("@"))handle="@"+handle;
-if(!/^@[a-zA-Z0-9_]{3,30}$/.test(handle)){showError("channelBasicsError","Channel handle must contain 3–30 letters, numbers, or underscores.");return}
-const button=document.getElementById("startCreatorSetup");button.disabled=true;button.textContent="Checking...";
-const {data:nameMatch,error:nameError}=await supabaseClient.from("channels").select("id").ilike("channel_name",name).maybeSingle();
-if(nameError){console.error(nameError);showError("channelBasicsError","Could not check channel name. Please try again.");button.disabled=false;button.textContent="Continue →";return}
-if(nameMatch){showError("channelBasicsError","That channel name is already taken.");button.disabled=false;button.textContent="Continue →";return}
-const {data:handleMatch,error:handleError}=await supabaseClient.from("channels").select("id").eq("handle",handle).maybeSingle();
-if(handleError){console.error(handleError);showError("channelBasicsError","Could not check channel handle. Please try again.");button.disabled=false;button.textContent="Continue →";return}
-if(handleMatch){showError("channelBasicsError","That channel name or handle is already taken.");button.disabled=false;button.textContent="Continue →";return}
-creatorChannelData.channelName=name;creatorChannelData.handle=handle;
-button.disabled=false;button.textContent="Continue →";channelBasicsView.style.display="none";creatorStepsView.style.display="block";creatorStep=1;updateCreatorStep();
-});
-
-document.getElementById("uploadChannelLogo").addEventListener("click",()=>document.getElementById("creatorLogoInput").click());
-
-document.getElementById("creatorLogoInput").addEventListener("change",async function(){
-const file=this.files[0];if(!file)return;
-if(!file.type.startsWith("image/")){setCreatorStatus("Please choose an image file.",true);this.value="";return}
-if(file.size>10*1024*1024){setCreatorStatus("Logo must be smaller than 10 MB.",true);this.value="";return}
-try{
-creatorLogoData=await resizeImage(file);
-const img=document.getElementById("creatorLogoImage");img.src=creatorLogoData;img.style.display="block";document.getElementById("creatorLogoFallback").style.display="none";setCreatorStatus("Logo ready.");
-}catch(e){console.error(e);setCreatorStatus("Could not process that logo.",true)}
-this.value="";
-});
-
-document.getElementById("channelDescription").addEventListener("input",function(){document.getElementById("descriptionCount").textContent=this.value.length+" / 500"});
-
-document.getElementById("creatorBack").addEventListener("click",()=>{
-if(creatorStep>1){creatorStep--;updateCreatorStep()}else{creatorStepsView.style.display="none";channelBasicsView.style.display="block"}
-});
-
-async function finishCreatorSetup(){
-creatorChannelData.description=document.getElementById("channelDescription").value.trim();
-creatorChannelData.languages=document.getElementById("channelLanguages").value.trim();
-const specialty=document.querySelector('input[name="specialty"]:checked');
-creatorChannelData.specialty=specialty?.value||"";
-if(!creatorLogoData){setCreatorStatus("Please upload your channel logo.",true);return}
-if(!creatorChannelData.specialty){setCreatorStatus("Please choose your specialty.",true);return}
-
-setCreatorStatus("Creating your channel...");
-document.getElementById("creatorNext").disabled=true;
-bossFill.style.width="100%";
-
-const {data:sessionData}=await supabaseClient.auth.getSession();
-if(!sessionData.session){setCreatorStatus("Your session has expired. Please sign in again.",true);document.getElementById("creatorNext").disabled=false;return}
-
-const {data,error}=await supabaseClient.from("channels").insert({
-user_id:sessionData.session.user.id,
-channel_name:creatorChannelData.channelName,
-handle:creatorChannelData.handle,
-logo_url:creatorLogoData,
-specialty:creatorChannelData.specialty,
-description:creatorChannelData.description,
-languages:creatorChannelData.languages
-}).select().single();
-
-if(error){
-console.error(error);
-setCreatorStatus(error.code==="23505"?"That channel name or handle is already taken.":error.message,true);
-document.getElementById("creatorNext").disabled=false;
-bossFill.style.width="75%";
-return;
-}
-
-currentChannel=data;
-setupChannel(currentChannel);
-document.getElementById("creatorNext").disabled=false;
-creatorStep=4;
-creatorStepCount.textContent="4/4";
-bossFill.style.width="100%";
-setCreatorStatus("Channel created.");
-setTimeout(()=>{closeCreatorSetup();showPage("channel")},450);
-}
-
-document.getElementById("creatorNext").addEventListener("click",()=>{
-if(creatorStep===1){
-if(!creatorLogoData){setCreatorStatus("Please upload your channel logo.",true);return}
-creatorStep=2;updateCreatorStep();return;
-}
-if(creatorStep===2){
-if(!document.querySelector('input[name="specialty"]:checked')){setCreatorStatus("Please choose your specialty.",true);return}
-creatorStep=3;updateCreatorStep();return;
-}
-if(creatorStep===3){creatorStep=4;updateCreatorStep();return;}
-finishCreatorSetup();
-});
-
-document.getElementById("signOut").addEventListener("click",async()=>{
-await supabaseClient.auth.signOut();currentProfile=null;currentChannel=null;app.classList.remove("active");authPage.style.display="flex";showScreen(signInScreen);document.getElementById("loginStatus").textContent="";
-});
-
-supabaseClient.auth.onAuthStateChange(async (event,session)=>{
-if(event==="SIGNED_OUT"){currentProfile=null;currentChannel=null;app.classList.remove("active");showSignIn();return}
-if((event==="SIGNED_IN"||event==="INITIAL_SESSION")&&session&&!authBooting){await checkProfile(session.user.id)}
-});
-
-checkSession();
+document.getElementById("signOut").addEventListener("click",async()=>{await supabaseClient.auth.signOut()});supabaseClient.auth.onAuthStateChange(async(event,session)=>{if(event==="SIGNED_OUT"){currentProfile=null;currentChannel=null;app.classList.remove("active");showSignIn()}else if((event==="SIGNED_IN"||event==="INITIAL_SESSION")&&session&&!authBooting){await checkProfile(session.user.id)}});
+applyTheme(localStorage.getItem("matrix-theme")||"dark");checkSession();
 </script>
 </body>
 </html>
